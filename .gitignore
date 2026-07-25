@@ -1,0 +1,23 @@
+# Local agent instructions
+AGENTS.md
+
+# Local review and legacy source
+代码审查.md
+板子.md
+
+# Generated files
+output/
+tmp/
+*.pdf
+
+# Dependencies and tooling
+node_modules/
+dist/
+*.log
+.vscode/
+.idea/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini

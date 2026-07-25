@@ -1,0 +1,45 @@
+# Power Projection：基础版
+
+> **用途：** 对
+> $h(i)=[x^N]f(x)g(x)^i$，
+> 批量求出 $i=0,1,\ldots,n$ 的结果。
+>
+> **复杂度：** 主要由若干轮二元卷积、一次多项式求逆和一次一元卷积构成；在快速卷积模型下可按 $\widetilde O(N+n)$ 理解，具体常数取决于二元卷积的压缩长度。
+>
+> **依赖：** 二元多项式卷积、多项式求逆、阶乘与逆阶乘。
+
+```cpp
+vector<int> powerProjection(vector<int> f, vector<int> g, int n) {
+    int C = g[0]; 
+    g[0] = 0;
+
+    if (f.size() < g.size()) f.resize(g.size());
+    int N = g.size()-1;
+    vector P(f.size(), vector<int>(2)), Q(g.size(), vector<int>(2));
+    for (int i = 0; i < (int)f.size(); i++) P[i][0] = f[i];
+    Q[0][0] = 1;
+    for (int i = 0; i < (int)g.size(); i++) Q[i][1] = (mod-g[i])%mod;
+    int i;
+    for (; N; N /= 2) {
+        auto H = Q;
+        for (i = 1; i < (int)H.size(); i+=2) for (auto &x : H[i]) if (x) x = mod-x;
+        P *= H, Q *= H;
+        for (i = 0; i*4 < (int)P.size(); i++) P[i].swap(P[i*2+N%2]);
+        P.resize(i);
+        for (i = 0; i*4 < (int)Q.size(); i++) Q[i].swap(Q[i*2]);
+        Q.resize(i);
+    }
+
+    Q[0].resize(n+1);
+    P[0] *= inv(Q[0]);
+    P[0].resize(n+1);
+
+    vector<int> A(n+1);
+    for (int i = 0, j = 1; i <= n; i++, j = j*C%mod) A[i] = j*ifac(i)%mod, P[0][i] = P[0][i]*ifac(i)%mod; 
+    A *= P[0];
+    A.resize(n+1);
+    for (int i = 0; i <= n; i++) (A[i] *= fac(i)) %= mod;
+
+    return A;
+}
+```
