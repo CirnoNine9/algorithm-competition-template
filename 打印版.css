@@ -53,30 +53,55 @@ body {
   line-height: 1.2;
 }
 
-.print-cover-subtitle {
-  margin: 6mm 0 0;
-  color: var(--print-muted);
-  font-size: 14pt;
-  letter-spacing: 0.08em;
+.print-cover-author {
+  display: flex;
+  align-items: baseline;
+  gap: 2.2mm;
+  margin: 7mm 0 0;
 }
 
-.print-cover-rule {
-  width: 42mm;
-  height: 0.7mm;
-  margin: 18mm 0 10mm;
-  background: var(--print-accent);
+.print-cover-author span {
+  color: #94a3b8;
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.2em;
 }
 
-.print-cover-meta,
-.print-cover-note {
-  margin: 0;
-  color: var(--print-muted);
+.print-cover-author a {
+  color: #b4232c;
+  font-size: 12pt;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+}
+
+.print-cover-topics {
+  width: 126mm;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3mm;
+  margin-top: 19mm;
+}
+
+.print-cover-topics div {
+  display: flex;
+  align-items: center;
+  gap: 3mm;
+  min-height: 13mm;
+  padding: 0 4mm;
+  border: 0.25mm solid #d8e0e9;
+  border-radius: 1.5mm;
+  color: #334155;
+  background: #f8fafc;
   font-size: 9.5pt;
+  font-weight: 600;
+  text-align: left;
 }
 
-.print-cover-note {
-  margin-top: 4mm;
-  font-size: 8.5pt;
+.print-cover-topics span {
+  color: #b4232c;
+  font-size: 7.5pt;
+  font-weight: 800;
+  letter-spacing: 0.08em;
 }
 
 .print-page-break {
