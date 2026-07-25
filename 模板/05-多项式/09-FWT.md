@@ -4,7 +4,7 @@
 >
 > **复杂度：** 每种变换与卷积均为 $O(n\log n)$，空间 $O(n)$；`n` 是补齐后的二次幂长度。
 >
-> **使用条件：** 两个卷积输入必须落在同一个下标全集中，实际使用时应确保二者补到相同长度；XOR 逆变换要求 `2` 在模数下可逆。
+> **使用条件：** 两个卷积输入必须落在同一个下标全集中，重载会将二者补到相同长度；XOR 逆变换要求 `2` 在模数下可逆。
 
 OR：
 
@@ -44,6 +44,7 @@ void Or(vector<int> &a, int type) {
 }
 
 vector<int> operator|(vector<int> a, vector<int> b) {
+    a.resize(max(a.size(),b.size())), b.resize(a.size());
     Or(a,1), Or(b,1);
     int n = a.size();
     for (int i = 0; i < n; i++) (a[i] *= b[i]) %= mod;
@@ -67,6 +68,7 @@ void And(vector<int> &a, int type) {
 }
 
 vector<int> operator&(vector<int> a, vector<int> b) {
+    a.resize(max(a.size(),b.size())), b.resize(a.size());
     And(a,1), And(b,1);
     int n = a.size();
     for (int i = 0; i < n; i++) (a[i] *= b[i]) %= mod;
@@ -93,6 +95,7 @@ void Xor(vector<int> &a, int type) {
 }
 
 vector<int> operator^(vector<int> a, vector<int> b) {
+    a.resize(max(a.size(),b.size())), b.resize(a.size());
     Xor(a,1), Xor(b,1);
     int n = a.size();
     for (int i = 0; i < n; i++) (a[i] *= b[i]) %= mod;
