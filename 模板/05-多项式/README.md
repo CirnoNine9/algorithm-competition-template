@@ -18,9 +18,10 @@
 | 14 | [多项式平方根](14-多项式平方根.md) | $g^2=f\bmod x^n$ | $O(n\log n)$ |
 | 15 | [多项式快速幂](15-多项式快速幂.md) | 大整数指数的 $f^k$ | $O(n\log n)$ |
 | 16 | [拉格朗日反演](16-拉格朗日反演.md) | 隐式生成函数系数提取 | 公式速查 |
-| 17 | [分式第 N 项](17-分式第N项.md) | $[x^N]f/g$ | $O(n\log n\log N)$ |
-| 18 | [多点求值](18-多点求值.md) | 同时计算多个 $f(x_i)$ | $O(n\log^2n)$ 量级 |
-| 19 | [点值平移](19-点值平移.md) | $f(0..n)\to f(m..m+n)$ | $O(n\log n)$ |
-| 20 | [快速阶乘](20-快速阶乘.md) | 大 $n$ 的 $n!\bmod p$ | $\widetilde O(\sqrt n)$ |
-| 21 | [Power Projection 基础版](21-Power-Projection-基础版.md) | 批量求 $[x^N]fg^i$ | 准线性量级 |
-| 22 | [Power Projection 卡常版](22-Power-Projection-卡常版.md) | 高性能批量幂投影 | 准线性量级 |
+| 17 | [单位根反演](17-单位根反演.md) | 生成函数同余类筛选 | 公式速查 |
+| 18 | [分式第 N 项](18-分式第N项.md) | $[x^N]f/g$ | $O(n\log n\log N)$ |
+| 19 | [多点求值](19-多点求值.md) | 同时计算多个 $f(x_i)$ | $O(n\log^2n)$ 量级 |
+| 20 | [点值平移](20-点值平移.md) | $f(0..n)\to f(m..m+n)$ | $O(n\log n)$ |
+| 21 | [快速阶乘](21-快速阶乘.md) | 大 $n$ 的 $n!\bmod p$ | $\widetilde O(\sqrt n)$ |
+| 22 | [Power Projection 基础版](22-Power-Projection-基础版.md) | 批量求 $[x^N]fg^i$ | 准线性量级 |
+| 23 | [Power Projection 卡常版](23-Power-Projection-卡常版.md) | 高性能批量幂投影 | 准线性量级 |
