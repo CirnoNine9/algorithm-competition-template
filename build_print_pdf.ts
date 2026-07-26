@@ -24,7 +24,7 @@ const printPageNumbers = {
     '03-数据结构': 28,
     '04-图论与网络流': 40,
     '05-多项式': 46,
-    '06-Python': 76,
+    '06-Python': 77,
   } as Record<string, number>,
   documents: {
     '01-数论/01-组合数与O1逆元.md': 5,
@@ -65,15 +65,16 @@ const printPageNumbers = {
     '05-多项式/13-多项式对数与指数.md': 63,
     '05-多项式/14-多项式平方根.md': 65,
     '05-多项式/15-多项式快速幂.md': 66,
-    '05-多项式/16-分式第N项.md': 67,
-    '05-多项式/17-多点求值.md': 68,
-    '05-多项式/18-点值平移.md': 70,
-    '05-多项式/19-快速阶乘.md': 71,
-    '05-多项式/20-Power-Projection-基础版.md': 72,
-    '05-多项式/21-Power-Projection-卡常版.md': 73,
-    '06-Python/01-datetime库.md': 77,
-    '06-Python/02-Fraction库.md': 79,
-    '06-Python/03-math库常用函数.md': 81,
+    '05-多项式/16-拉格朗日反演.md': 67,
+    '05-多项式/17-分式第N项.md': 68,
+    '05-多项式/18-多点求值.md': 69,
+    '05-多项式/19-点值平移.md': 71,
+    '05-多项式/20-快速阶乘.md': 72,
+    '05-多项式/21-Power-Projection-基础版.md': 73,
+    '05-多项式/22-Power-Projection-卡常版.md': 74,
+    '06-Python/01-datetime库.md': 78,
+    '06-Python/02-Fraction库.md': 80,
+    '06-Python/03-math库常用函数.md': 82,
   } as Record<string, number>,
 };
 
@@ -302,7 +303,7 @@ async function main(): Promise<void> {
       {
         outputPath,
         bytes: stat.size,
-        sourceDocuments: 47,
+        sourceDocuments: 48,
       },
       null,
       2
