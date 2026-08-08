@@ -25,3 +25,4 @@
 | 21 | [快速阶乘](21-快速阶乘.md) | 大 $n$ 的 $n!\bmod p$ | $\widetilde O(\sqrt n)$ |
 | 22 | [Power Projection 基础版](22-Power-Projection-基础版.md) | 批量求 $[x^N]fg^i$ | 准线性量级 |
 | 23 | [Power Projection 卡常版](23-Power-Projection-卡常版.md) | 高性能批量幂投影 | 准线性量级 |
+| 24 | [最短递推式](24-最短递推式.md) | 从序列前缀求最短线性递推 | $O(nL)$，最坏 $O(n^2)$ |

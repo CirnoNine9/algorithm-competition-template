@@ -24,7 +24,7 @@ const printPageNumbers = {
     '03-数据结构': 28,
     '04-图论与网络流': 40,
     '05-多项式': 46,
-    '06-Python': 78,
+    '06-Python': 79,
   } as Record<string, number>,
   documents: {
     '01-数论/01-组合数与O1逆元.md': 5,
@@ -73,9 +73,10 @@ const printPageNumbers = {
     '05-多项式/21-快速阶乘.md': 73,
     '05-多项式/22-Power-Projection-基础版.md': 74,
     '05-多项式/23-Power-Projection-卡常版.md': 75,
-    '06-Python/01-datetime库.md': 79,
-    '06-Python/02-Fraction库.md': 81,
-    '06-Python/03-math库常用函数.md': 83,
+    '05-多项式/24-最短递推式.md': 78,
+    '06-Python/01-datetime库.md': 80,
+    '06-Python/02-Fraction库.md': 82,
+    '06-Python/03-math库常用函数.md': 84,
   } as Record<string, number>,
 };
 
@@ -334,7 +335,7 @@ async function main(): Promise<void> {
       {
         outputPath,
         bytes: stat.size,
-        sourceDocuments: 49,
+        sourceDocuments: 50,
       },
       null,
       2
