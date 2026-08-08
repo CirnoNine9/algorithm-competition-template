@@ -80,7 +80,37 @@ const printPageNumbers = {
 };
 
 function stripLocalLinks(markdown: string): string {
-  return markdown.replace(/\[([^\]]+)\]\((?!https?:\/\/|mailto:|#)[^)]+\)/g, '$1');
+  const parts = markdown.split(/(\r?\n)/);
+  let fence: { marker: string; length: number } | undefined;
+
+  for (let index = 0; index < parts.length; index += 2) {
+    const line = parts[index];
+    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+
+    if (fence) {
+      if (
+        fenceMatch &&
+        fenceMatch[1][0] === fence.marker &&
+        fenceMatch[1].length >= fence.length &&
+        fenceMatch[2].trim() === ''
+      ) {
+        fence = undefined;
+      }
+      continue;
+    }
+
+    if (fenceMatch) {
+      fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
+      continue;
+    }
+
+    parts[index] = line.replace(
+      /\[([^\]]+)\]\((?!https?:\/\/|mailto:|#)[^)]+\)/g,
+      '$1'
+    );
+  }
+
+  return parts.join('');
 }
 
 function removeFirstHeading(markdown: string): string {
