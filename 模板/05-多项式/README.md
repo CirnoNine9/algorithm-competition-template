@@ -27,3 +27,4 @@
 | 23 | [Power Projection 基础版](23-Power-Projection-基础版.md) | 批量求 $[x^N]fg^i$ | 准线性量级 |
 | 24 | [Power Projection 卡常版](24-Power-Projection-卡常版.md) | 高性能批量幂投影 | 准线性量级 |
 | 25 | [最短递推式](25-最短递推式.md) | 从序列前缀求最短线性递推 | $O(nL)$，最坏 $O(n^2)$ |
+| 26 | [常系数齐次线性递推](26-常系数齐次线性递推.md) | 将递推转成分式求第 $N$ 项 | $O(k\log k\log N)$ |
