@@ -24,7 +24,7 @@ const printPageNumbers = {
     '03-数据结构': 28,
     '04-图论与网络流': 40,
     '05-多项式': 46,
-    '06-Python': 81,
+    '06-Python': 82,
   } as Record<string, number>,
   documents: {
     '01-数论/01-组合数与O1逆元.md': 5,
@@ -75,10 +75,10 @@ const printPageNumbers = {
     '05-多项式/23-Power-Projection-基础版.md': 75,
     '05-多项式/24-Power-Projection-卡常版.md': 76,
     '05-多项式/25-最短递推式.md': 79,
-    '05-多项式/26-常系数齐次线性递推.md': 80,
-    '06-Python/01-datetime库.md': 82,
-    '06-Python/02-Fraction库.md': 84,
-    '06-Python/03-math库常用函数.md': 86,
+    '05-多项式/26-常系数齐次线性递推.md': 81,
+    '06-Python/01-datetime库.md': 83,
+    '06-Python/02-Fraction库.md': 85,
+    '06-Python/03-math库常用函数.md': 87,
   } as Record<string, number>,
 };
 

@@ -4,7 +4,7 @@
 >
 > **复杂度：** 单次变换 $O(n\log n)$，卷积 $O((n+m)\log(n+m))$，额外空间 $O(n+m)$。
 >
-> **使用条件：** 常量 `31`、`23` 与根表均绑定 `998244353`；输入系数应先规范到 `[0,mod)`。
+> **使用条件：** 常量 `31`、`23` 与根表均绑定 `998244353`；输入系数应先规范到 `[0,mod)`。`operator*=` 覆盖左操作数，`operator*` 返回乘积。
 
 ```cpp
 void ntt(vector<int> &A, int n, int op) {
@@ -142,4 +142,6 @@ void operator*=(vector<int> &A, vector<int> B) {
     ntt(A, cnt, -1);
     A.resize(n+m-1);
 }
+
+vector<int> operator*(vector<int> A, vector<int> B) {A *= B; return A;}
 ```
