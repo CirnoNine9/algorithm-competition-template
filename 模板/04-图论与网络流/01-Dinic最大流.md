@@ -11,29 +11,29 @@ const int INF = 1e18;
 
 struct Flow {
     int S, T;
-    vector<array<int,3>> e;
-    vector<int> h,d,cur;
-    map<pii,int> mp;
+    vector<array<int, 3>> e;
+    vector<int> h, d, cur;
+    map<pii, int> mp;
 
     void addEdge(int u, int v, int cap) {
-        if (mp.count({u,v})) {
-            e[mp[{u,v}]][1] += cap;
+        if (mp.count({u, v})) {
+            e[mp[{u, v}]][1] += cap;
             return;
         }
-        int sz = max(u,v)+1;
+        int sz = max(u, v)+1;
         if ((int)h.size() < sz) h.resize(sz), d.resize(sz), cur.resize(sz);
 
-        e.push_back({v,cap,h[u]});
+        e.push_back({v, cap, h[u]});
         h[u] = e.size()-1;
-        mp[{u,v}] = h[u];
+        mp[{u, v}] = h[u];
 
-        e.push_back({u,0,h[v]});
+        e.push_back({u, 0, h[v]});
         h[v] = e.size()-1;
-        mp[{v,u}] = h[v];
+        mp[{v, u}] = h[v];
     }
     
     bool bfs() {
-        fill(d.begin(),d.end(),0);
+        fill(d.begin(), d.end(), 0);
         queue<int> q;
         d[S] = 1;
         q.push(S);
@@ -58,7 +58,7 @@ struct Flow {
         for (int &i = cur[u]; i; i = e[i][2]) {
             int v = e[i][0];
             if (d[v] != d[u]+1 || !e[i][1]) continue;
-            int f = dfs(v,min(mf, e[i][1]));
+            int f = dfs(v, min(mf, e[i][1]));
             e[i][1] -= f, e[i^1][1] += f;
             sum += f, mf -= f;
             if (mf == 0) break;

@@ -12,7 +12,7 @@
 const double PI = acosl(-1);
 using cd = complex<double>;
 const cd I_(0, 1);
-void fft(vector<cd> &A,int n,int op) {
+void fft(vector<cd> &A, int n, int op) {
     static vector<int> r;
     static vector<cd> wn;
     static int pre = 0;
@@ -26,7 +26,7 @@ void fft(vector<cd> &A,int n,int op) {
         reverse(wn.begin(), wn.end());
         pre = op;
     }
-    for (int i = 0; i < n; i++) if (i < r[i]) swap(A[i],A[r[i]]);
+    for (int i = 0; i < n; i++) if (i < r[i]) swap(A[i], A[r[i]]);
 
     for (int i = 2; i <= n; i<<=1) {
         int tmp = n/i;

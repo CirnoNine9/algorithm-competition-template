@@ -9,8 +9,8 @@
 ```cpp
 const int N = 1e6, B = 1e3; // B = sqrt(N)
 vector<signed> prime;
-vector<bool> isP(N+9,1);
-array<signed,3> FAC[N+9]; // 分解成3个<=B或质数的因子
+vector<bool> isP(N+9, 1);
+array<signed, 3> FAC[N+9]; // 分解成3个<=B或质数的因子
 signed GCD[B+9][B+9];
 void init() {
     for (int i = 0; i <= B; i++) {
@@ -22,17 +22,17 @@ void init() {
         }
     }
 
-    FAC[1] = {1,1,1};
+    FAC[1] = {1, 1, 1};
     for (int i = 2; i <= N; i++) {
         if (isP[i]) {
             prime.push_back(i);
-            FAC[i] = {1,1,(signed)i};
+            FAC[i] = {1, 1, (signed)i};
         }
         for (auto p : prime) {
             if (i*p > N) break;
             isP[i*p] = 0;
             FAC[i*p] = FAC[i];
-            *min_element(FAC[i*p].begin(),FAC[i*p].end()) *= p;
+            *min_element(FAC[i*p].begin(), FAC[i*p].end()) *= p;
             if (i%p == 0) {
                 break;
             }
@@ -51,9 +51,9 @@ template <typename T>
 int gcd(T x, T y) {
     if (y < 0) y = -y;
     if (!x) return y;
-    int a0 = gcd2(FAC[x][0],y);
-    int a1 = gcd2(FAC[x][1],y/=a0);
-    int a2 = gcd2(FAC[x][2],y/=a1);
+    int a0 = gcd2(FAC[x][0], y);
+    int a1 = gcd2(FAC[x][1], y/=a0);
+    int a2 = gcd2(FAC[x][2], y/=a1);
     return a0*a1*a2;
 }
 ```

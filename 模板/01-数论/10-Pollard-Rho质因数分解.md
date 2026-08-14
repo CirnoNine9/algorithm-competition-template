@@ -7,7 +7,7 @@
 > **依赖：** `rng`、支持三参数的 `qpow(a,b,mod)`、`i128`。模乘必须使用足够宽的中间类型。
 
 ```cpp
-const int TEST[] = {2,325,9375,28178,450775,9780504,1795265022};
+const int TEST[] = {2, 325, 9375, 28178, 450775, 9780504, 1795265022};
 int lowbit(int x) {return x&-x;}
 bool isPrime(int n) {
     if (n < 3 || n % 2 == 0) return n == 2;
@@ -16,7 +16,7 @@ bool isPrime(int n) {
     int u = (n-1)/(1ll<<t);
     for (auto a : TEST) {
         if (a%n == 0) continue;
-        a = qpow(a,u,n); // i128
+        a = qpow(a, u, n); // i128
         if (a == 1) continue;
         bool flag = 0;
         for (int i = 1; i <= t; i++, a = (i128)a*a%n) {
@@ -46,7 +46,7 @@ int pollardRho(int n) {
                 g = (i128)g*abs(i-j)%n;
                 i = f(i), j = f(f(j));  
             }
-            g = gcd(g,n);
+            g = gcd(g, n);
             if (g == n) break;
             if (g != 1) return g;
         }
@@ -67,8 +67,7 @@ int pp(int n, int cnt = 1) {
     int c = 0;
     while (n%p == 0) n/=p, c++;
 
-    pp(p, c*cnt);
-    pp(n, cnt);
+    pp(p, c*cnt), pp(n, cnt);
 
     return res;
 }

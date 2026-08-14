@@ -21,8 +21,8 @@ $$
 ```cpp
 const int N = 4e6; //根号值域上限
 const double eps = 1e-6;
-vector<bool> isP(N+9,1);
-vector<int> prime,pi(N+9);
+vector<bool> isP(N+9, 1);
+vector<int> prime, pi(N+9);
 signed phi[1000000][60]; //预处理
 void init() {
     isP[0] = isP[1] = 0;
@@ -50,12 +50,12 @@ int calPhi(int n, int a) {
     if (a == 0) return n;
     if (n < (int)1e6 && a < 60) return phi[n][a];
     if (n <= N && prime[a-1] * prime[a-1] >= n) return max(0ll, pi[n]-a+1);
-    return calPhi(n,a-1)-calPhi(n/prime[a-1],a-1);
+    return calPhi(n, a-1)-calPhi(n/prime[a-1], a-1);
 }
 int calPi(int n) {
     if (n <= N) return pi[n];
-    int a = calPi(powl(n,1./3)+eps);
-    int res = a-1+calPhi(n,a);
+    int a = calPi(powl(n, 1./3)+eps);
+    int res = a-1+calPhi(n, a);
     for (int i = a+1; ; i++) {
         int p = prime[i-1];
         if (p*p > n) break;

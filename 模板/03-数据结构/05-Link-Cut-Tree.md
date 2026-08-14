@@ -33,8 +33,7 @@ struct Splay {
 
     void pushDown(int u) {
         if (tr[u].lazy == 0) return;
-        setTag(ls(u), tr[u].lazy);
-        setTag(rs(u), tr[u].lazy);
+        setTag(ls(u), tr[u].lazy), setTag(rs(u), tr[u].lazy);
         tr[u].lazy = 0;
     }
 
@@ -78,7 +77,7 @@ struct Splay {
     void makeRoot(int x) {
         access(x);
         splay(x);
-        setTag(x,1);
+        setTag(x, 1);
     }
 
     int findRoot(int x) {

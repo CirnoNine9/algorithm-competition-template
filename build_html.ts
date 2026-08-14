@@ -371,12 +371,6 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
   let cipolla = requireFence(markdownBySource, cipollaSource);
   cipolla = requireReplacement(cipolla, /^mt19937_64 rng\(time\(0\)\);\s*/, '', 'remove duplicate rng');
   cipolla = requireReplacement(cipolla, /^int mod;\s*/m, '', 'remove duplicate mod declaration');
-  cipolla = requireReplacement(
-    cipolla,
-    /^[ \t]*if \(mod == 2\) return n;\r?\n/m,
-    '',
-    'remove unreachable mod 2 branch'
-  );
 
   const densePowerSource = '模板/05-多项式/16-多项式快速幂.md';
   const densePower = requireFence(markdownBySource, densePowerSource, 0);

@@ -14,7 +14,7 @@
 mt19937_64 rng(time(0));
 int mod;
 bool check(int n) {
-    return qpow(n,(mod-1)/2) == 1;
+    return qpow(n, (mod-1)/2) == 1;
 }
 
 int cipolla(int n) {
@@ -25,11 +25,10 @@ int cipolla(int n) {
     while (check((a*a-n+mod)%mod)) a = rng()%mod;
     int t = (mod+1)/2;
     int i2 = (a*a-n+mod)%mod;
-    pii ans = {1,0};
-    pii b = {a,1};
+    pii ans = {1, 0}, b = {a, 1};
     while (t) {
-        if (t%2) ans = {(ans[0]*b[0]+ans[1]*b[1]%mod*i2)%mod,(ans[0]*b[1]+ans[1]*b[0])%mod};
-        b = {(b[0]*b[0]+b[1]*b[1]%mod*i2)%mod,(b[0]*b[1]+b[1]*b[0])%mod};
+        if (t%2) ans = {(ans[0]*b[0]+ans[1]*b[1]%mod*i2)%mod, (ans[0]*b[1]+ans[1]*b[0])%mod};
+        b = {(b[0]*b[0]+b[1]*b[1]%mod*i2)%mod, (b[0]*b[1]+b[1]*b[0])%mod};
         t/=2;
     }
     if (mod-ans[0] < ans[0]) ans[0] = mod-ans[0];

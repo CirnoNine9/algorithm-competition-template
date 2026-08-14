@@ -68,8 +68,7 @@ struct Treap {
 
     void extract(int val) {
         int x, y, z;
-        split(root, val, x, z);
-        split(x, val - 1, x, y);
+        split(root, val, x, z), split(x, val - 1, x, y);
         y = merge(tr[y].l, tr[y].r);
         root = merge(merge(x, y), z);
     }

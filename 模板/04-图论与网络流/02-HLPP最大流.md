@@ -95,12 +95,9 @@ struct Flow {
         workcnt = maxh = maxgaph = 0;
         fill(h.begin(), h.end(), n);
         h[t] = 0;
-        fill(gapPrv.begin(), gapPrv.end(), -1);
-        fill(gapNxt.begin(), gapNxt.end(), -1);
-        fill(gap.begin(), gap.end(), -1);
-        fill(ovList.begin(), ovList.end(), -1);
-        fill(ovNxt.begin(), ovNxt.end(), -1);
-        fill(cur.begin(), cur.end(), 0);
+        fill(gapPrv.begin(), gapPrv.end(), -1), fill(gapNxt.begin(), gapNxt.end(), -1);
+        fill(gap.begin(), gap.end(), -1), fill(ovList.begin(), ovList.end(), -1);
+        fill(ovNxt.begin(), ovNxt.end(), -1), fill(cur.begin(), cur.end(), 0);
 
         queue<int> q;
         q.push(t);
@@ -146,10 +143,8 @@ struct Flow {
             ovNxt[e.to] = ovList[h[e.to]];
             ovList[h[e.to]] = e.to;
         }
-        e.c -= flow;
-        vec[e.to][e.rev].c += flow;
-        ov[from] -= flow;
-        ov[e.to] += flow;
+        e.c -= flow, vec[e.to][e.rev].c += flow;
+        ov[from] -= flow, ov[e.to] += flow;
     }
 };
 ```
