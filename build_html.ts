@@ -24,7 +24,7 @@ const categoryDirectories = [
 
 const categoryDescriptions: Record<string, string> = {
   '01-数论': '组合数、同余、离散对数、筛法与质因数分解',
-  '02-计算几何': '点、直线、多边形、凸包、闵可夫斯基和与半平面交',
+  '02-计算几何': '点、直线、多边形、圆、凸包、闵可夫斯基和与半平面交',
   '03-数据结构': '树状数组、平衡树与动态树',
   '04-图论与网络流': 'Dinic、HLPP 与网络流实现',
   '05-多项式': '变换、形式幂级数、求值与线性递推',
@@ -59,7 +59,7 @@ interface CategoryRecord {
 
 const renderConfig: ExportConfig = {
   theme: 'academic',
-  codeTheme: 'github-dark-dimmed',
+  codeTheme: 'github-dark',
   pageFormat: 'A4',
   margin: { top: '16mm', right: '16mm', bottom: '16mm', left: '16mm' },
   fontFamily: '"Microsoft YaHei", "Segoe UI", Arial, sans-serif',
@@ -638,7 +638,7 @@ function renderHomepage(
     '<section class="home-hero">',
     '  <div class="home-hero-copy">',
     '    <h1><span>比赛模板，</span><span>随查随抄。</span></h1>',
-    '    <p>54 份模板，离线检索、公式速查、代码一键复制。</p>',
+    '    <p>55 份模板，离线检索、公式速查、代码一键复制。</p>',
     '    <div class="hero-actions">',
     `      <a class="primary-button" href="${escapeAttribute(relativeHref(outputRelative, '模板/index.html'))}">浏览完整目录</a>`,
     `      <a class="secondary-button" href="${escapeAttribute(pdfHref)}">打开打印版</a>`,
@@ -649,7 +649,7 @@ function renderHomepage(
     '  </div>',
     '</section>',
     '<section class="home-stats" aria-label="模板统计">',
-    '  <div><strong>54</strong><span>独立模板</span></div>',
+    '  <div><strong>55</strong><span>独立模板</span></div>',
     '  <div><strong>6</strong><span>主题分类</span></div>',
     '  <div><strong>2</strong><span>离线产物</span></div>',
     '  <p>HTML 负责查找与复制，PDF 负责打印与赛场翻阅。</p>',
@@ -684,7 +684,7 @@ async function main(): Promise<void> {
   }
 
   const { templateIndex, categories, documents } = await loadDocuments();
-  if (documents.length !== 54) throw new Error(`Expected 54 template documents, found ${documents.length}.`);
+  if (documents.length !== 55) throw new Error(`Expected 55 template documents, found ${documents.length}.`);
   const allRenderable = [templateIndex, ...categories.map((category) => category.index), ...documents];
   const sourceOutputMap = new Map(allRenderable.map((document) => [document.sourceRelative, document.outputRelative]));
   const polyBundle = buildPolyBundle(allRenderable);
@@ -757,8 +757,8 @@ async function main(): Promise<void> {
 
   const htmlFiles = (await fs.readdir(outputRoot, { recursive: true }))
     .filter((name) => typeof name === 'string' && name.toLowerCase().endsWith('.html'));
-  if (htmlFiles.length !== 62) {
-    throw new Error(`Expected 62 HTML pages, generated ${htmlFiles.length}.`);
+  if (htmlFiles.length !== 63) {
+    throw new Error(`Expected 63 HTML pages, generated ${htmlFiles.length}.`);
   }
 
   process.stdout.write(JSON.stringify({
