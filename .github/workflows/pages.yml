@@ -55,11 +55,26 @@ jobs:
               --repo "$GITHUB_REPOSITORY" \
               --pattern 'algorithm-competition-template-offline-web-*.zip' \
               --dir download
+          gh release download "$TAG" \
+              --repo "$GITHUB_REPOSITORY" \
+              --pattern 'algorithm-competition-template-print.pdf' \
+              --dir download
           mapfile -t archives < <(find download -maxdepth 1 -type f \
               -name 'algorithm-competition-template-offline-web-*.zip')
           [[ "${#archives[@]}" -eq 1 ]]
-          unzip -q "${archives[0]}" -d _site
+          python3 -m zipfile -e "${archives[0]}" _site
           test -f _site/index.html
+          test -f _site/模板/index.html
+
+          mkdir -p _site/pdf
+          cp download/algorithm-competition-template-print.pdf \
+              _site/pdf/algorithm-competition-template-print.pdf
+          sed -i \
+              's#../pdf/算法竞赛模板-打印版.pdf#./pdf/algorithm-competition-template-print.pdf#g' \
+              _site/index.html
+          test -f _site/pdf/algorithm-competition-template-print.pdf
+          grep -qF './pdf/algorithm-competition-template-print.pdf' \
+              _site/index.html
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
