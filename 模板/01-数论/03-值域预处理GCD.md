@@ -40,14 +40,14 @@ void init() {
     }
 }
 
-template <typename T>
+template <class T>
 int gcd2(signed x, T y) {
     int tmp = y%x;
     if (isP[x]) return tmp ? 1 : x;
     return GCD[tmp][x];
 }
 
-template <typename T>
+template <class T>
 int gcd(T x, T y) {
     if (y < 0) y = -y;
     if (!x) return y;
