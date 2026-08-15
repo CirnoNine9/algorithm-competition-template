@@ -41,6 +41,18 @@
     link.addEventListener('click', closeNavigation);
   });
 
+  const sectionLinks = [...document.querySelectorAll('.sidebar-document-sections a')];
+  const updateCurrentSection = () => {
+    sectionLinks.forEach((link) => {
+      const current = link.hash && link.hash === window.location.hash;
+      link.classList.toggle('current-section', current);
+      if (current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  updateCurrentSection();
+  window.addEventListener('hashchange', updateCurrentSection);
+
   document.querySelectorAll('.sidebar-group-toggle').forEach((button) => {
     button.addEventListener('click', () => {
       const list = document.getElementById(button.getAttribute('aria-controls'));

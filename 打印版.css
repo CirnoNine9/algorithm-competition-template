@@ -109,6 +109,11 @@ body {
   page-break-after: always;
 }
 
+.print-group-break {
+  break-before: page;
+  page-break-before: always;
+}
+
 .print-manual-toc {
   min-height: 252mm;
   break-after: page;
@@ -150,7 +155,7 @@ body {
   font-weight: 800;
 }
 
-.print-manual-toc ol {
+.print-manual-toc-documents {
   counter-reset: print-toc-item;
   list-style: none;
   margin: 0;
@@ -159,7 +164,7 @@ body {
   line-height: 1.22;
 }
 
-.print-manual-toc li {
+.print-manual-toc-documents > li {
   counter-increment: print-toc-item;
   margin: 0 0 0.7mm;
 }
@@ -173,11 +178,35 @@ body {
   text-decoration: none;
 }
 
-.print-manual-toc li > .print-manual-toc-entry::before {
+.print-manual-toc-document > .print-manual-toc-entry::before {
   content: counter(print-toc-item) ".";
   flex: 0 0 4.5mm;
   margin-right: 1mm;
   text-align: right;
+}
+
+.print-manual-toc-sections {
+  list-style: none;
+  margin: 0.35mm 0 0.7mm;
+  padding: 0 0 0 5.5mm;
+  color: #64748b;
+  font-size: 6.2pt;
+  line-height: 1.14;
+}
+
+.print-manual-toc-sections li {
+  margin: 0 0 0.25mm;
+}
+
+.print-manual-toc-section-entry::before {
+  content: "-";
+  flex: 0 0 3mm;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.print-manual-toc-section-entry .print-manual-toc-page {
+  color: #64748b;
 }
 
 .print-manual-toc-entry-title {
@@ -232,6 +261,27 @@ h6 {
   margin: 4mm 0 2mm;
   color: #27364a;
   font-size: 10.5pt;
+}
+
+h3,
+h4,
+h5,
+h6 {
+  break-after: avoid;
+  page-break-after: avoid;
+}
+
+h3 + table,
+h4 + table,
+h5 + table,
+h6 + table {
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+table:has(+ pre) {
+  break-after: avoid;
+  page-break-after: avoid;
 }
 
 p,

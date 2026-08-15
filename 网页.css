@@ -405,6 +405,39 @@ summary:focus-visible {
   font-weight: 700;
 }
 
+.site-sidebar .sidebar-document-sections {
+  margin: 1px 0 5px;
+  padding: 0 0 0 14px;
+}
+
+.site-sidebar .sidebar-document-sections li a {
+  padding: 4px 10px 4px 12px;
+  border-left-width: 1px;
+  color: var(--text-faint);
+  font-size: 11.5px;
+  line-height: 1.35;
+}
+
+.site-sidebar .sidebar-document-sections li a::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  margin: 0 7px 2px 0;
+  border-radius: 50%;
+  background: var(--line-strong);
+}
+
+.site-sidebar .sidebar-document-sections li a:hover,
+.site-sidebar .sidebar-document-sections li a.current-section {
+  border-left-color: var(--accent);
+  color: var(--text);
+}
+
+.site-sidebar .sidebar-document-sections li a.current-section::before {
+  background: var(--accent);
+}
+
 .sidebar-backdrop {
   display: none;
 }

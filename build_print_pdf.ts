@@ -21,10 +21,10 @@ const printPageNumbers = {
   categories: {
     '01-数论': 4,
     '02-计算几何': 24,
-    '03-数据结构': 37,
-    '04-图论与网络流': 48,
-    '05-多项式': 54,
-    '06-Python': 90,
+    '03-数据结构': 38,
+    '04-图论与网络流': 49,
+    '05-多项式': 55,
+    '06-Python': 91,
   } as Record<string, number>,
   documents: {
     '01-数论/01-组合数与O1逆元.md': 5,
@@ -44,44 +44,58 @@ const printPageNumbers = {
     '02-计算几何/02-直线.md': 27,
     '02-计算几何/03-任意多边形.md': 29,
     '02-计算几何/04-凸多边形.md': 30,
-    '02-计算几何/05-圆.md': 34,
-    '02-计算几何/06-半平面交.md': 36,
-    '03-数据结构/01-树状数组.md': 38,
-    '03-数据结构/02-线段树-区间取min.md': 39,
-    '03-数据结构/03-Treap.md': 41,
-    '03-数据结构/04-pb_ds平衡树.md': 44,
-    '03-数据结构/05-Link-Cut-Tree.md': 45,
-    '04-图论与网络流/01-Dinic最大流.md': 49,
-    '04-图论与网络流/02-HLPP最大流.md': 51,
-    '05-多项式/01-拉格朗日插值.md': 55,
-    '05-多项式/02-FFT.md': 56,
-    '05-多项式/03-NTT-基础版.md': 57,
-    '05-多项式/04-NTT-卡常版.md': 58,
-    '05-多项式/05-MTT任意模卷积.md': 61,
-    '05-多项式/06-二元NTT.md': 62,
-    '05-多项式/07-二元多项式卷积.md': 63,
-    '05-多项式/08-任意因子长度DFT.md': 64,
-    '05-多项式/09-FWT.md': 66,
-    '05-多项式/10-多项式乘法逆.md': 68,
-    '05-多项式/11-稀疏多项式除法.md': 69,
-    '05-多项式/12-多项式加法减法.md': 70,
-    '05-多项式/13-多项式整除与取模.md': 71,
-    '05-多项式/14-多项式对数与指数.md': 72,
-    '05-多项式/15-多项式平方根.md': 74,
-    '05-多项式/16-多项式快速幂.md': 75,
-    '05-多项式/17-拉格朗日反演.md': 76,
-    '05-多项式/18-单位根反演.md': 77,
-    '05-多项式/19-分式第N项.md': 78,
-    '05-多项式/20-多点求值.md': 79,
-    '05-多项式/21-点值平移.md': 81,
-    '05-多项式/22-快速阶乘.md': 82,
-    '05-多项式/23-Power-Projection-基础版.md': 83,
-    '05-多项式/24-Power-Projection-卡常版.md': 84,
-    '05-多项式/25-最短递推式.md': 87,
-    '05-多项式/26-常系数齐次线性递推.md': 89,
-    '06-Python/01-datetime库.md': 91,
-    '06-Python/02-Fraction库.md': 93,
-    '06-Python/03-math库常用函数.md': 95,
+    '02-计算几何/05-圆.md': 35,
+    '02-计算几何/06-半平面交.md': 37,
+    '03-数据结构/01-树状数组.md': 39,
+    '03-数据结构/02-线段树-区间取min.md': 40,
+    '03-数据结构/03-Treap.md': 42,
+    '03-数据结构/04-pb_ds平衡树.md': 45,
+    '03-数据结构/05-Link-Cut-Tree.md': 46,
+    '04-图论与网络流/01-Dinic最大流.md': 50,
+    '04-图论与网络流/02-HLPP最大流.md': 52,
+    '05-多项式/01-拉格朗日插值.md': 56,
+    '05-多项式/02-FFT.md': 57,
+    '05-多项式/03-NTT-基础版.md': 58,
+    '05-多项式/04-NTT-卡常版.md': 59,
+    '05-多项式/05-MTT任意模卷积.md': 62,
+    '05-多项式/06-二元NTT.md': 63,
+    '05-多项式/07-二元多项式卷积.md': 64,
+    '05-多项式/08-任意因子长度DFT.md': 65,
+    '05-多项式/09-FWT.md': 67,
+    '05-多项式/10-多项式乘法逆.md': 69,
+    '05-多项式/11-稀疏多项式除法.md': 70,
+    '05-多项式/12-多项式加法减法.md': 71,
+    '05-多项式/13-多项式整除与取模.md': 72,
+    '05-多项式/14-多项式对数与指数.md': 73,
+    '05-多项式/15-多项式平方根.md': 75,
+    '05-多项式/16-多项式快速幂.md': 76,
+    '05-多项式/17-拉格朗日反演.md': 77,
+    '05-多项式/18-单位根反演.md': 78,
+    '05-多项式/19-分式第N项.md': 79,
+    '05-多项式/20-多点求值.md': 80,
+    '05-多项式/21-点值平移.md': 82,
+    '05-多项式/22-快速阶乘.md': 83,
+    '05-多项式/23-Power-Projection-基础版.md': 84,
+    '05-多项式/24-Power-Projection-卡常版.md': 85,
+    '05-多项式/25-最短递推式.md': 88,
+    '05-多项式/26-常系数齐次线性递推.md': 90,
+    '06-Python/01-datetime库.md': 92,
+    '06-Python/02-Fraction库.md': 94,
+    '06-Python/03-math库常用函数.md': 96,
+  } as Record<string, number>,
+  sections: {
+    '02-计算几何/02-直线.md#1': 27,
+    '02-计算几何/02-直线.md#2': 27,
+    '02-计算几何/02-直线.md#3': 28,
+    '02-计算几何/03-任意多边形.md#1': 29,
+    '02-计算几何/03-任意多边形.md#2': 29,
+    '02-计算几何/04-凸多边形.md#1': 30,
+    '02-计算几何/04-凸多边形.md#2': 31,
+    '02-计算几何/04-凸多边形.md#3': 31,
+    '02-计算几何/04-凸多边形.md#4': 33,
+    '02-计算几何/04-凸多边形.md#5': 34,
+    '02-计算几何/05-圆.md#1': 35,
+    '02-计算几何/05-圆.md#2': 35,
   } as Record<string, number>,
 };
 
@@ -143,6 +157,39 @@ function documentAnchor(category: string, name: string): string {
   return `toc-document-${numericPrefix(category)}-${numericPrefix(name)}`;
 }
 
+function sectionAnchor(category: string, name: string, index: number): string {
+  return `${documentAnchor(category, name)}-section-${index + 1}`;
+}
+
+function extractSecondLevelHeadings(markdown: string): string[] {
+  const headings: string[] = [];
+  const lines = markdown.split(/\r?\n/);
+  let fence: { marker: string; length: number } | undefined;
+
+  for (const line of lines) {
+    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (fence) {
+      if (
+        fenceMatch &&
+        fenceMatch[1][0] === fence.marker &&
+        fenceMatch[1].length >= fence.length &&
+        fenceMatch[2].trim() === ''
+      ) {
+        fence = undefined;
+      }
+      continue;
+    }
+    if (fenceMatch) {
+      fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
+      continue;
+    }
+    const heading = line.match(/^##\s+(.+)$/)?.[1]?.trim();
+    if (heading) headings.push(heading);
+  }
+
+  return headings;
+}
+
 function escapeHtmlText(value: string): string {
   return value
     .replace(/&/g, '&amp;')
@@ -170,14 +217,24 @@ function renderHeadingInline(markdown: string): string {
     .join('');
 }
 
-function formatLeafDocument(markdown: string, anchorId: string): string {
+function formatLeafDocument(
+  markdown: string,
+  anchorId: string,
+  sectionAnchorIds: string[]
+): string {
   let firstHeading = true;
+  let sectionIndex = 0;
   return markdown.replace(
     /^(#{1,5})\s+([^\r\n]+)$/gm,
     (_match, hashes: string, title: string) => {
       if (firstHeading) {
         firstHeading = false;
         return `<h2 id="${anchorId}">${renderHeadingInline(title)}</h2>`;
+      }
+      if (hashes.length === 2) {
+        const sectionAnchorId = sectionAnchorIds[sectionIndex++];
+        if (!sectionAnchorId) throw new Error(`Missing print section anchor for ${title}`);
+        return `<h4 id="${sectionAnchorId}">${renderHeadingInline(title)}</h4>`;
       }
       return `${'#'.repeat(Math.min(6, hashes.length + 2))} ${title}`;
     }
@@ -202,6 +259,11 @@ async function buildPrintableMarkdown(): Promise<string> {
       anchorId: string;
       markdown: string;
       page: number;
+      sections: Array<{
+        title: string;
+        anchorId: string;
+        page?: number;
+      }>;
     }>;
   }> = [];
 
@@ -216,12 +278,18 @@ async function buildPrintableMarkdown(): Promise<string> {
         const markdown = await readUtf8(path.join(directory, name));
         const rawTitle = markdown.match(/^#\s+([^\r\n]+)/)?.[1]?.trim() ?? path.parse(name).name;
         const title = plainHeading(rawTitle);
+        const sections = extractSecondLevelHeadings(markdown).map((rawSectionTitle, index) => ({
+          title: plainHeading(rawSectionTitle),
+          anchorId: sectionAnchor(category, name, index),
+          page: printPageNumbers.sections[`${category}/${name}#${index + 1}`],
+        }));
         return {
           name,
           title,
           anchorId: documentAnchor(category, name),
           markdown,
           page: printPageNumbers.documents[`${category}/${name}`],
+          sections,
         };
       })
     );
@@ -235,9 +303,14 @@ async function buildPrintableMarkdown(): Promise<string> {
     });
   }
 
-  const tocRow = (title: string, page: number, anchorId: string): string =>
+  const tocRow = (
+    title: string,
+    page: number,
+    anchorId: string,
+    extraClass = ''
+  ): string =>
     [
-      `<a class="print-manual-toc-entry" href="#${anchorId}">`,
+      `<a class="print-manual-toc-entry${extraClass ? ` ${extraClass}` : ''}" href="#${anchorId}">`,
       '<span class="print-manual-toc-entry-title">',
       title,
       '</span><span class="print-manual-toc-leader"></span>',
@@ -249,10 +322,26 @@ async function buildPrintableMarkdown(): Promise<string> {
     '<div class="print-manual-toc-column">',
     ...documents.flatMap((category) => [
       `<div class="print-manual-toc-group"><p class="print-manual-toc-category">${tocRow(category.title, category.page, category.anchorId)}</p>`,
-      '<ol>',
-      ...category.leaves.map(
-        (leaf) => `<li>${tocRow(leaf.title, leaf.page, leaf.anchorId)}</li>`
-      ),
+      '<ol class="print-manual-toc-documents">',
+      ...category.leaves.map((leaf) => {
+        const sections = leaf.sections.filter(
+          (section): section is typeof section & { page: number } => section.page !== undefined
+        );
+        return [
+          '<li class="print-manual-toc-document">',
+          tocRow(leaf.title, leaf.page, leaf.anchorId),
+          ...(sections.length
+            ? [
+                '<ol class="print-manual-toc-sections">',
+                ...sections.map(
+                  (section) => `<li>${tocRow(section.title, section.page, section.anchorId, 'print-manual-toc-section-entry')}</li>`
+                ),
+                '</ol>',
+              ]
+            : []),
+          '</li>',
+        ].join('\n');
+      }),
       '</ol></div>',
     ]),
     '</div>',
@@ -298,7 +387,15 @@ async function buildPrintableMarkdown(): Promise<string> {
     );
 
     for (const leaf of category.leaves) {
-      parts.push(stripLocalLinks(formatLeafDocument(leaf.markdown.trim(), leaf.anchorId)));
+      parts.push(
+        stripLocalLinks(
+          formatLeafDocument(
+            leaf.markdown.trim(),
+            leaf.anchorId,
+            leaf.sections.map((section) => section.anchorId)
+          )
+        )
+      );
     }
   }
 

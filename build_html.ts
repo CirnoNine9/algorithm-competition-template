@@ -38,6 +38,14 @@ interface CodeFence {
   code: string;
 }
 
+interface DocumentSection {
+  title: string;
+}
+
+interface RenderedSection extends DocumentSection {
+  id: string;
+}
+
 interface TemplateDocument {
   sourceRelative: string;
   outputRelative: string;
@@ -48,6 +56,7 @@ interface TemplateDocument {
   kind: PageKind;
   purpose: string;
   complexity: string;
+  sections: DocumentSection[];
 }
 
 interface CategoryRecord {
@@ -96,6 +105,35 @@ function stripInlineMarkdown(value: string): string {
 function extractTitle(markdown: string, fallback: string): string {
   const title = markdown.match(/^#\s+([^\r\n]+)/m)?.[1];
   return stripInlineMarkdown(title ?? fallback);
+}
+
+function extractSecondLevelHeadings(markdown: string): DocumentSection[] {
+  const sections: DocumentSection[] = [];
+  const lines = markdown.split(/\r?\n/);
+  let fence: { marker: string; length: number } | undefined;
+
+  for (const line of lines) {
+    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+    if (fence) {
+      if (
+        fenceMatch &&
+        fenceMatch[1][0] === fence.marker &&
+        fenceMatch[1].length >= fence.length &&
+        fenceMatch[2].trim() === ''
+      ) {
+        fence = undefined;
+      }
+      continue;
+    }
+    if (fenceMatch) {
+      fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
+      continue;
+    }
+    const title = line.match(/^##\s+(.+)$/)?.[1];
+    if (title) sections.push({ title: stripInlineMarkdown(title) });
+  }
+
+  return sections;
 }
 
 function extractCallout(markdown: string, label: string): string {
@@ -270,6 +308,22 @@ async function renderMarkdownBody(
   return wrapRenderedCodeBlocks(body.trim(), lightBody.trim(), fences);
 }
 
+function extractRenderedSections(
+  document: TemplateDocument,
+  renderedBody: string
+): RenderedSection[] {
+  if (document.kind !== 'document' || !document.sections.length) return [];
+  const ids = [...renderedBody.matchAll(/<h2\b[^>]*\bid="([^"]+)"[^>]*>/gi)].map(
+    (match) => match[1]
+  );
+  if (ids.length !== document.sections.length) {
+    throw new Error(
+      `Rendered ${ids.length} second-level headings, but ${document.sourceRelative} contains ${document.sections.length}.`
+    );
+  }
+  return document.sections.map((section, index) => ({ ...section, id: ids[index] }));
+}
+
 async function loadDocuments(): Promise<{
   templateIndex: TemplateDocument;
   categories: CategoryRecord[];
@@ -284,6 +338,7 @@ async function loadDocuments(): Promise<{
     kind: 'template-index',
     purpose: '按分类浏览全部算法竞赛模板',
     complexity: '',
+    sections: extractSecondLevelHeadings(templateIndexMarkdown),
   };
 
   const categories: CategoryRecord[] = [];
@@ -303,6 +358,7 @@ async function loadDocuments(): Promise<{
       kind: 'category',
       purpose: categoryDescriptions[directory],
       complexity: '',
+      sections: extractSecondLevelHeadings(indexMarkdown),
     };
     const names = (await fs.readdir(absoluteDirectory))
       .filter((name) => name.toLowerCase().endsWith('.md') && name !== 'README.md')
@@ -321,6 +377,7 @@ async function loadDocuments(): Promise<{
         kind: 'document',
         purpose: extractCallout(markdown, '用途'),
         complexity: extractCallout(markdown, '复杂度'),
+        sections: extractSecondLevelHeadings(markdown),
       };
       categoryDocuments.push(document);
       documents.push(document);
@@ -474,14 +531,25 @@ function renderHeader(outputRelative: string): string {
 function renderSidebar(
   outputRelative: string,
   categories: CategoryRecord[],
-  activeOutput?: string
+  activeOutput?: string,
+  activeSections: RenderedSection[] = []
 ): string {
   const groups = categories.map((category, index) => {
     const isCurrent = activeOutput?.includes(`/模板/${category.directory}/`) || activeOutput?.startsWith(`模板/${category.directory}/`);
     const listId = `sidebar-category-${index + 1}`;
     const items = category.documents.map((document) => {
-      const active = document.outputRelative === activeOutput ? ' aria-current="page" class="active"' : '';
-      return `<li><a${active} href="${escapeAttribute(relativeHref(outputRelative, document.outputRelative))}">${escapeHtml(document.title)}</a></li>`;
+      const isActive = document.outputRelative === activeOutput;
+      const active = isActive ? ' aria-current="page" class="active"' : '';
+      const sections = isActive && activeSections.length
+        ? [
+            `<ol class="sidebar-document-sections" aria-label="${escapeAttribute(document.title)}小标题">`,
+            ...activeSections.map(
+              (section) => `<li><a href="#${escapeAttribute(section.id)}">${escapeHtml(section.title)}</a></li>`
+            ),
+            '</ol>',
+          ].join('\n')
+        : '';
+      return `<li class="sidebar-document-item"><a${active} href="${escapeAttribute(relativeHref(outputRelative, document.outputRelative))}">${escapeHtml(document.title)}</a>${sections}</li>`;
     }).join('\n');
     return [
       '<section class="sidebar-group">',
@@ -575,6 +643,7 @@ function renderSiteShell(input: {
   content: string;
   categories: CategoryRecord[];
   activeOutput?: string;
+  activeSections?: RenderedSection[];
   description: string;
   home?: boolean;
 }): string {
@@ -584,7 +653,12 @@ function renderSiteShell(input: {
     ? `<main class="home-main">${input.content}</main>`
     : [
         '<div class="site-layout">',
-        renderSidebar(input.outputRelative, input.categories, input.activeOutput),
+        renderSidebar(
+          input.outputRelative,
+          input.categories,
+          input.activeOutput,
+          input.activeSections
+        ),
         '  <main class="content-main">',
         input.content,
         '    <footer class="site-footer"><span>CirnoNine</span><span>面向 ICPC、CCPC 与日常训练</span></footer>',
@@ -718,6 +792,7 @@ async function main(): Promise<void> {
     if (document.kind === 'category' && document.categoryDirectory === '05-多项式') {
       renderedBody = `${renderPolyBundlePanel(polyBundle)}\n${renderedBody}`;
     }
+    const activeSections = extractRenderedSections(document, renderedBody);
     const pageContent = [
       renderBreadcrumbs(document),
       `<article class="markdown-body">${renderedBody}</article>`,
@@ -729,6 +804,7 @@ async function main(): Promise<void> {
       content: pageContent,
       categories,
       activeOutput: document.outputRelative,
+      activeSections,
       description: document.purpose || `${document.title}算法竞赛模板`,
     });
     await writeFile(document.outputRelative, page);
@@ -743,6 +819,7 @@ async function main(): Promise<void> {
     kind: 'document',
     purpose: '比赛基础骨架',
     complexity: '',
+    sections: [],
   };
   const preview = await renderMarkdownBody(previewDocument, sourceOutputMap);
   const homepage = renderSiteShell({
