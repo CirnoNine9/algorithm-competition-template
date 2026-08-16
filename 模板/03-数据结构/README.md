@@ -7,3 +7,4 @@
 | 03 | [Treap](03-Treap.md) | 可重有序集合与顺序统计 | 期望 $O(\log n)$ |
 | 04 | [`pb_ds` 平衡树](04-pb_ds平衡树.md) | GNU 顺序统计树 | $O(\log n)$ |
 | 05 | [Link–Cut Tree](05-Link-Cut-Tree.md) | 动态森林与路径异或 | 均摊 $O(\log n)$ |
+| 06 | [后缀自动机](06-后缀自动机.md) | 转移 DAG、parent 树与 endpos | $O(nV)$ 构建 |
