@@ -6,5 +6,6 @@
 | 02 | [线段树](02-线段树.md) | 区间 `chmin`、区间最小值与区间二分 | $O(\log n)$ |
 | 03 | [Treap](03-Treap.md) | 可重有序集合与顺序统计 | 期望 $O(\log n)$ |
 | 04 | [`pb_ds` 平衡树](04-pb_ds平衡树.md) | GNU 顺序统计树 | $O(\log n)$ |
-| 05 | [Link–Cut Tree](05-Link-Cut-Tree.md) | 动态森林与路径异或 | 均摊 $O(\log n)$ |
-| 06 | [后缀自动机](06-后缀自动机.md) | 转移 DAG、parent 树与 endpos | $O(nV)$ 构建 |
+| 05 | [`pb_ds` 配对堆](05-pb_ds配对堆.md) | 可合并堆与任意元素修改 | 均摊 $O(\log n)$ |
+| 06 | [Link–Cut Tree](06-Link-Cut-Tree.md) | 动态森林与路径异或 | 均摊 $O(\log n)$ |
+| 07 | [后缀自动机](07-后缀自动机.md) | 转移 DAG、parent 树与 endpos | $O(nV)$ 构建 |
