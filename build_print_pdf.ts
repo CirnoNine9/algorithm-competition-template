@@ -14,7 +14,7 @@ const categories = [
   '03-数据结构',
   '04-图论与网络流',
   '05-多项式',
-  '06-Python',
+  '06-杂项',
 ];
 
 const printPageNumbers = {
@@ -24,7 +24,7 @@ const printPageNumbers = {
     '03-数据结构': 38,
     '04-图论与网络流': 56,
     '05-多项式': 69,
-    '06-Python': 105,
+    '06-杂项': 105,
   } as Record<string, number>,
   documents: {
     '01-数论/01-组合数与O1逆元.md': 5,
@@ -85,9 +85,10 @@ const printPageNumbers = {
     '05-多项式/24-Power-Projection-卡常版.md': 99,
     '05-多项式/25-最短递推式.md': 102,
     '05-多项式/26-常系数齐次线性递推.md': 104,
-    '06-Python/01-datetime库.md': 106,
-    '06-Python/02-Fraction库.md': 108,
-    '06-Python/03-math库常用函数.md': 110,
+    '06-杂项/01-i128重载.md': 106,
+    '06-杂项/02-datetime库.md': 108,
+    '06-杂项/03-Fraction库.md': 110,
+    '06-杂项/04-math库常用函数.md': 112,
   } as Record<string, number>,
   sections: {
     '02-计算几何/02-直线.md#1': 27,
@@ -365,7 +366,7 @@ async function buildPrintableMarkdown(): Promise<string> {
       '    <div><span>03</span>数据结构</div>',
       '    <div><span>04</span>图论与网络流</div>',
       '    <div><span>05</span>多项式</div>',
-      '    <div><span>06</span>Python</div>',
+      '    <div><span>06</span>杂项</div>',
       '  </div>',
       '</section>',
       '',
@@ -443,7 +444,7 @@ async function main(): Promise<void> {
       {
         outputPath,
         bytes: stat.size,
-        sourceDocuments: 61,
+        sourceDocuments: 62,
       },
       null,
       2

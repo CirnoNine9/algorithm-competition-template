@@ -14,4 +14,4 @@
 3. [数据结构](03-数据结构/README.md)：树状数组、线段树、Treap、`pb_ds` 平衡树与配对堆、树链剖分、Link–Cut Tree、后缀自动机。
 4. [图论与网络流](04-图论与网络流/README.md)：Dinic、HLPP、有上下界流、最小费用流、有上下界最小费用流。
 5. [多项式](05-多项式/README.md)：插值、各类变换、形式幂级数与 Power Projection。
-6. [Python](06-Python/README.md)：`datetime`、`Fraction`、`math` 常用接口。
+6. [杂项](06-杂项/README.md)：`i128` 输入输出与常用函数、Python 标准库接口。
