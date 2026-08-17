@@ -26,7 +26,7 @@ const categoryDescriptions: Record<string, string> = {
   '01-数论': '组合数、同余、离散对数、筛法与质因数分解',
   '02-计算几何': '点、直线、多边形、圆、凸包、闵可夫斯基和与半平面交',
   '03-数据结构': '树状数组、平衡树、树链剖分、动态树与字符串自动机',
-  '04-图论与网络流': 'Dinic、HLPP、上下界流与费用流实现',
+  '04-图论与网络流': '网络流、强连通分量、点双与边双连通分量',
   '05-多项式': '变换、形式幂级数、求值与线性递推',
   '06-杂项': 'i128 辅助与比赛常用标准库接口速查',
 };
@@ -758,7 +758,7 @@ async function main(): Promise<void> {
   }
 
   const { templateIndex, categories, documents } = await loadDocuments();
-  if (documents.length !== 62) throw new Error(`Expected 62 template documents, found ${documents.length}.`);
+  if (documents.length !== 65) throw new Error(`Expected 65 template documents, found ${documents.length}.`);
   const allRenderable = [templateIndex, ...categories.map((category) => category.index), ...documents];
   const sourceOutputMap = new Map(allRenderable.map((document) => [document.sourceRelative, document.outputRelative]));
   const polyBundle = buildPolyBundle(allRenderable);
@@ -834,8 +834,8 @@ async function main(): Promise<void> {
 
   const htmlFiles = (await fs.readdir(outputRoot, { recursive: true }))
     .filter((name) => typeof name === 'string' && name.toLowerCase().endsWith('.html'));
-  if (htmlFiles.length !== 70) {
-    throw new Error(`Expected 70 HTML pages, generated ${htmlFiles.length}.`);
+  if (htmlFiles.length !== 73) {
+    throw new Error(`Expected 73 HTML pages, generated ${htmlFiles.length}.`);
   }
 
   process.stdout.write(JSON.stringify({
