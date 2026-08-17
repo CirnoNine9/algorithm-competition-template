@@ -12,6 +12,6 @@
 1. [数论](01-数论/README.md)：组合数、同余、离散对数、筛法、质数计数、因数分解与类欧几里得。
 2. [计算几何](02-计算几何/README.md)：点与凸包、直线、任意与凸多边形、半平面交。
 3. [数据结构](03-数据结构/README.md)：树状数组、线段树、Treap、`pb_ds` 平衡树与配对堆、树链剖分、Link–Cut Tree、后缀自动机。
-4. [图论与网络流](04-图论与网络流/README.md)：Dinic、HLPP、有上下界流。
+4. [图论与网络流](04-图论与网络流/README.md)：Dinic、HLPP、有上下界流、最小费用流。
 5. [多项式](05-多项式/README.md)：插值、各类变换、形式幂级数与 Power Projection。
 6. [Python](06-Python/README.md)：`datetime`、`Fraction`、`math` 常用接口。
