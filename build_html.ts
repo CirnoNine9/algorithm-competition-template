@@ -758,7 +758,7 @@ async function main(): Promise<void> {
   }
 
   const { templateIndex, categories, documents } = await loadDocuments();
-  if (documents.length !== 66) throw new Error(`Expected 66 template documents, found ${documents.length}.`);
+  if (documents.length !== 67) throw new Error(`Expected 67 template documents, found ${documents.length}.`);
   const allRenderable = [templateIndex, ...categories.map((category) => category.index), ...documents];
   const sourceOutputMap = new Map(allRenderable.map((document) => [document.sourceRelative, document.outputRelative]));
   const polyBundle = buildPolyBundle(allRenderable);
@@ -834,8 +834,8 @@ async function main(): Promise<void> {
 
   const htmlFiles = (await fs.readdir(outputRoot, { recursive: true }))
     .filter((name) => typeof name === 'string' && name.toLowerCase().endsWith('.html'));
-  if (htmlFiles.length !== 74) {
-    throw new Error(`Expected 74 HTML pages, generated ${htmlFiles.length}.`);
+  if (htmlFiles.length !== 75) {
+    throw new Error(`Expected 75 HTML pages, generated ${htmlFiles.length}.`);
   }
 
   process.stdout.write(JSON.stringify({
