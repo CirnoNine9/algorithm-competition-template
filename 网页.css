@@ -502,11 +502,6 @@ summary:focus-visible {
   font-size: 19px;
 }
 
-.markdown-body p,
-.markdown-body li {
-  max-width: 76ch;
-}
-
 .markdown-body p {
   margin: 12px 0;
 }

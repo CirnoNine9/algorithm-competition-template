@@ -260,6 +260,14 @@ h5,
 h6 {
   margin: 4mm 0 2mm;
   color: #27364a;
+}
+
+h4 {
+  font-size: 11.5pt;
+}
+
+h5,
+h6 {
   font-size: 10.5pt;
 }
 
