@@ -24,7 +24,7 @@ const categoryDirectories = [
 
 const categoryDescriptions: Record<string, string> = {
   '01-数论': '组合数、同余、离散对数、筛法与质因数分解',
-  '02-计算几何': '点、直线、多边形、圆、凸包、闵可夫斯基和与半平面交',
+  '02-计算几何': '点、直线、多边形、圆、凸包、闵可夫斯基和、半平面交与 Delaunay 三角剖分',
   '03-数据结构': '树状数组、平衡树、树链剖分、动态树与字符串自动机',
   '04-图论与网络流': '强连通分量、边双与点双连通分量、2-SAT、匹配性质、网络流',
   '05-多项式': '变换、形式幂级数、求值与线性递推',
@@ -712,7 +712,7 @@ function renderHomepage(
     '<section class="home-hero">',
     '  <div class="home-hero-copy">',
     '    <h1><span>比赛模板，</span><span>随查随抄。</span></h1>',
-    '    <p>56 份模板，离线检索、公式速查、代码一键复制。</p>',
+    '    <p>69 份模板，离线检索、公式速查、代码一键复制。</p>',
     '    <div class="hero-actions">',
     `      <a class="primary-button" href="${escapeAttribute(relativeHref(outputRelative, '模板/index.html'))}">浏览完整目录</a>`,
     `      <a class="secondary-button" href="${escapeAttribute(pdfHref)}">打开打印版</a>`,
@@ -723,7 +723,7 @@ function renderHomepage(
     '  </div>',
     '</section>',
     '<section class="home-stats" aria-label="模板统计">',
-    '  <div><strong>56</strong><span>独立模板</span></div>',
+    '  <div><strong>69</strong><span>独立模板</span></div>',
     '  <div><strong>6</strong><span>主题分类</span></div>',
     '  <div><strong>2</strong><span>离线产物</span></div>',
     '  <p>HTML 负责查找与复制，PDF 负责打印与赛场翻阅。</p>',
@@ -758,7 +758,7 @@ async function main(): Promise<void> {
   }
 
   const { templateIndex, categories, documents } = await loadDocuments();
-  if (documents.length !== 68) throw new Error(`Expected 68 template documents, found ${documents.length}.`);
+  if (documents.length !== 69) throw new Error(`Expected 69 template documents, found ${documents.length}.`);
   const allRenderable = [templateIndex, ...categories.map((category) => category.index), ...documents];
   const sourceOutputMap = new Map(allRenderable.map((document) => [document.sourceRelative, document.outputRelative]));
   const polyBundle = buildPolyBundle(allRenderable);
@@ -834,8 +834,8 @@ async function main(): Promise<void> {
 
   const htmlFiles = (await fs.readdir(outputRoot, { recursive: true }))
     .filter((name) => typeof name === 'string' && name.toLowerCase().endsWith('.html'));
-  if (htmlFiles.length !== 76) {
-    throw new Error(`Expected 76 HTML pages, generated ${htmlFiles.length}.`);
+  if (htmlFiles.length !== 77) {
+    throw new Error(`Expected 77 HTML pages, generated ${htmlFiles.length}.`);
   }
 
   process.stdout.write(JSON.stringify({
