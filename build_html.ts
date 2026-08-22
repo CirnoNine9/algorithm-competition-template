@@ -445,6 +445,10 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
     'replace dense ln/exp with sparse recurrence'
   );
 
+  const expSource = '模板/05-多项式/14-多项式对数与指数.md';
+  const expCommon = requireFence(markdownBySource, expSource, 0);
+  const expFast = requireFence(markdownBySource, expSource, 2);
+
   const sources: Array<[string, number?]> = [
     ['模板/05-多项式/04-NTT-卡常版.md'],
     ['模板/05-多项式/08-任意因子长度DFT.md'],
@@ -453,7 +457,6 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
     ['模板/05-多项式/11-稀疏多项式除法.md'],
     ['模板/05-多项式/13-多项式整除与取模.md'],
     ['模板/05-多项式/19-分式第N项.md'],
-    ['模板/05-多项式/14-多项式对数与指数.md'],
   ];
   const laterSources: Array<[string, number?]> = [
     ['模板/05-多项式/15-多项式平方根.md'],
@@ -469,6 +472,8 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
     combination,
     'const int G = 3, Gi = inv(G);',
     ...sources.map(([source, index]) => requireFence(markdownBySource, source, index ?? 0)),
+    expCommon,
+    expFast,
     cipolla,
     requireFence(markdownBySource, '模板/05-多项式/15-多项式平方根.md'),
     densePower,
@@ -492,6 +497,7 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
     'void ntt(',
     'void dft(',
     'vector<int> inv(',
+    'vector<int> exp(',
     'vector<int> qpow2(',
     'int divAt(',
     'vector<int> powerProjection(',
