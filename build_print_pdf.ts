@@ -1,151 +1,91 @@
 import { promises as fs } from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { exportMarkdownToPdf } from '../../../../../projects/markdown2pdf/src/pdf';
 import type { ExportConfig } from '../../../../../projects/markdown2pdf/src/config';
 
 const workspaceRoot = path.resolve(process.argv[2] ?? process.cwd());
+const templateRoot = path.join(workspaceRoot, '模板');
+const markdown2pdfRoot = path.resolve(
+  workspaceRoot,
+  '../../../../../projects/markdown2pdf'
+);
 const outputPath = path.resolve(
-  process.argv[3] ?? path.join(workspaceRoot, 'output', 'pdf', '算法竞赛模板-打印版.pdf')
+  process.argv[3] ??
+    path.join(workspaceRoot, 'output', 'pdf', '算法竞赛模板-打印版.pdf')
 );
 
-const categories = [
-  '01-数论',
-  '02-计算几何',
-  '03-数据结构',
-  '04-图论与网络流',
-  '05-多项式',
-  '06-杂项',
-];
+type PageNumbers = Record<string, number>;
+interface PrintSection {
+  title: string;
+  anchorId: string;
+}
+interface PrintDocument {
+  name: string;
+  title: string;
+  anchorId: string;
+  markdown: string;
+  sections: PrintSection[];
+}
+interface PrintCategory {
+  directory: string;
+  title: string;
+  anchorId: string;
+  indexMarkdown: string;
+  leaves: PrintDocument[];
+}
+interface PrintableBuild {
+  markdown: string;
+  anchors: string[];
+  sourceDocuments: number;
+}
 
-const printPageNumbers = {
-  categories: {
-    '01-数论': 4,
-    '02-计算几何': 24,
-    '03-数据结构': 43,
-    '04-图论与网络流': 63,
-    '05-多项式': 88,
-    '06-杂项': 124,
-  } as Record<string, number>,
-  documents: {
-    '01-数论/01-组合数与O1逆元.md': 5,
-    '01-数论/02-Barrett约简.md': 7,
-    '01-数论/03-值域预处理GCD.md': 8,
-    '01-数论/04-EXGCD与EXCRT.md': 10,
-    '01-数论/05-Pohlig-Hellman.md': 11,
-    '01-数论/06-二次剩余-Cipolla.md': 12,
-    '01-数论/07-常用狄利克雷卷积等式.md': 13,
-    '01-数论/08-杜教筛.md': 14,
-    '01-数论/09-Meissel-Lehmer质数计数.md': 16,
-    '01-数论/10-Pollard-Rho质因数分解.md': 18,
-    '01-数论/11-Min25筛.md': 20,
-    '01-数论/12-类欧几里得算法.md': 22,
-    '01-数论/13-万能欧几里得算法.md': 23,
-    '02-计算几何/01-点与凸包.md': 25,
-    '02-计算几何/02-直线.md': 27,
-    '02-计算几何/03-任意多边形.md': 29,
-    '02-计算几何/04-凸多边形.md': 30,
-    '02-计算几何/05-圆.md': 35,
-    '02-计算几何/06-半平面交.md': 37,
-    '02-计算几何/07-Delaunay三角剖分.md': 38,
-    '03-数据结构/01-树状数组.md': 44,
-    '03-数据结构/02-线段树.md': 45,
-    '03-数据结构/03-Treap.md': 48,
-    '03-数据结构/04-pb_ds平衡树.md': 52,
-    '03-数据结构/05-pb_ds配对堆.md': 53,
-    '03-数据结构/06-树链剖分.md': 54,
-    '03-数据结构/07-Link-Cut-Tree.md': 56,
-    '03-数据结构/08-点分治.md': 59,
-    '03-数据结构/09-后缀自动机.md': 61,
-    '04-图论与网络流/01-强连通分量.md': 64,
-    '04-图论与网络流/02-边双连通分量.md': 66,
-    '04-图论与网络流/03-点双连通分量.md': 68,
-    '04-图论与网络流/04-2-SAT.md': 70,
-    '04-图论与网络流/05-Dinic最大流.md': 72,
-    '04-图论与网络流/06-HLPP最大流.md': 74,
-    '04-图论与网络流/07-有上下界流.md': 77,
-    '04-图论与网络流/08-最小费用流.md': 79,
-    '04-图论与网络流/09-有上下界最小费用流.md': 82,
-    '04-图论与网络流/10-二分图最大权匹配.md': 84,
-    '04-图论与网络流/11-图匹配相关性质.md': 86,
-    '05-多项式/01-拉格朗日插值.md': 89,
-    '05-多项式/02-FFT.md': 90,
-    '05-多项式/03-NTT-基础版.md': 91,
-    '05-多项式/04-NTT-卡常版.md': 92,
-    '05-多项式/05-MTT任意模卷积.md': 95,
-    '05-多项式/06-二元NTT.md': 96,
-    '05-多项式/07-二元多项式卷积.md': 97,
-    '05-多项式/08-任意因子长度DFT.md': 98,
-    '05-多项式/09-FWT.md': 100,
-    '05-多项式/10-多项式乘法逆.md': 102,
-    '05-多项式/11-稀疏多项式除法.md': 103,
-    '05-多项式/12-多项式加法减法.md': 104,
-    '05-多项式/13-多项式整除与取模.md': 105,
-    '05-多项式/14-多项式对数与指数.md': 106,
-    '05-多项式/15-多项式平方根.md': 108,
-    '05-多项式/16-多项式快速幂.md': 109,
-    '05-多项式/17-拉格朗日反演.md': 110,
-    '05-多项式/18-单位根反演.md': 111,
-    '05-多项式/19-分式第N项.md': 112,
-    '05-多项式/20-多点求值.md': 113,
-    '05-多项式/21-点值平移.md': 115,
-    '05-多项式/22-快速阶乘.md': 116,
-    '05-多项式/23-Power-Projection-基础版.md': 117,
-    '05-多项式/24-Power-Projection-卡常版.md': 118,
-    '05-多项式/25-最短递推式.md': 121,
-    '05-多项式/26-常系数齐次线性递推.md': 123,
-    '06-杂项/01-i128重载.md': 125,
-    '06-杂项/02-datetime库.md': 127,
-    '06-杂项/03-Fraction库.md': 129,
-    '06-杂项/04-math库常用函数.md': 131,
-  } as Record<string, number>,
-  sections: {
-    '02-计算几何/02-直线.md#1': 27,
-    '02-计算几何/02-直线.md#2': 27,
-    '02-计算几何/02-直线.md#3': 28,
-    '02-计算几何/03-任意多边形.md#1': 29,
-    '02-计算几何/03-任意多边形.md#2': 29,
-    '02-计算几何/04-凸多边形.md#1': 30,
-    '02-计算几何/04-凸多边形.md#2': 31,
-    '02-计算几何/04-凸多边形.md#3': 31,
-    '02-计算几何/04-凸多边形.md#4': 33,
-    '02-计算几何/04-凸多边形.md#5': 34,
-    '02-计算几何/05-圆.md#1': 35,
-    '02-计算几何/05-圆.md#2': 35,
-    '02-计算几何/05-圆.md#3': 36,
-  } as Record<string, number>,
-};
+function naturalCompare(left: string, right: string): number {
+  return left.localeCompare(right, 'zh-CN', {
+    numeric: true,
+    sensitivity: 'base',
+  });
+}
+
+async function discoverCategories(): Promise<string[]> {
+  const entries = await fs.readdir(templateRoot, { withFileTypes: true });
+  const categories = entries
+    .filter((entry) => entry.isDirectory() && /^\d+-/.test(entry.name))
+    .map((entry) => entry.name)
+    .sort(naturalCompare);
+  if (categories.length === 0)
+    throw new Error(
+      'No numbered category directories found in ' + templateRoot
+    );
+  return categories;
+}
 
 function stripLocalLinks(markdown: string): string {
   const parts = markdown.split(/(\r?\n)/);
   let fence: { marker: string; length: number } | undefined;
-
   for (let index = 0; index < parts.length; index += 2) {
     const line = parts[index];
-    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
-
+    const fenceMatch = line.match(/^ {0,3}([\x60]{3,}|~{3,})(.*)$/);
     if (fence) {
       if (
         fenceMatch &&
         fenceMatch[1][0] === fence.marker &&
         fenceMatch[1].length >= fence.length &&
         fenceMatch[2].trim() === ''
-      ) {
+      )
         fence = undefined;
-      }
       continue;
     }
-
     if (fenceMatch) {
       fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
       continue;
     }
-
     parts[index] = line.replace(
       /\[([^\]]+)\]\((?!https?:\/\/|mailto:|#)[^)]+\)/g,
       '$1'
     );
   }
-
   return parts.join('');
 }
 
@@ -156,43 +96,43 @@ function removeFirstHeading(markdown: string): string {
 function plainHeading(markdownHeading: string): string {
   return markdownHeading
     .replace(/\$([^$]+)\$/g, '$1')
-    .replace(/[`*_~]/g, '')
+    .replace(/[\x60*_~]/g, '')
     .replace(/\\([_{}])/g, '$1')
     .trim();
+}
+
+function extractHeading(markdown: string, fallback: string): string {
+  return plainHeading(
+    markdown.match(/^#\s+([^\r\n]+)/)?.[1]?.trim() ?? fallback
+  );
 }
 
 function numericPrefix(value: string): string {
   return value.match(/^(\d+)/)?.[1] ?? value.replace(/[^a-zA-Z0-9]+/g, '-');
 }
-
 function categoryAnchor(category: string): string {
-  return `toc-category-${numericPrefix(category)}`;
+  return 'toc-category-' + numericPrefix(category);
 }
-
 function documentAnchor(category: string, name: string): string {
-  return `toc-document-${numericPrefix(category)}-${numericPrefix(name)}`;
+  return 'toc-document-' + numericPrefix(category) + '-' + numericPrefix(name);
 }
-
 function sectionAnchor(category: string, name: string, index: number): string {
-  return `${documentAnchor(category, name)}-section-${index + 1}`;
+  return documentAnchor(category, name) + '-section-' + (index + 1);
 }
 
 function extractSecondLevelHeadings(markdown: string): string[] {
   const headings: string[] = [];
-  const lines = markdown.split(/\r?\n/);
   let fence: { marker: string; length: number } | undefined;
-
-  for (const line of lines) {
-    const fenceMatch = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+  for (const line of markdown.split(/\r?\n/)) {
+    const fenceMatch = line.match(/^ {0,3}([\x60]{3,}|~{3,})(.*)$/);
     if (fence) {
       if (
         fenceMatch &&
         fenceMatch[1][0] === fence.marker &&
         fenceMatch[1].length >= fence.length &&
         fenceMatch[2].trim() === ''
-      ) {
+      )
         fence = undefined;
-      }
       continue;
     }
     if (fenceMatch) {
@@ -202,7 +142,6 @@ function extractSecondLevelHeadings(markdown: string): string[] {
     const heading = line.match(/^##\s+(.+)$/)?.[1]?.trim();
     if (heading) headings.push(heading);
   }
-
   return headings;
 }
 
@@ -212,21 +151,28 @@ function escapeHtmlText(value: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
 }
-
 function escapeHtmlAttribute(value: string): string {
   return escapeHtmlText(value).replace(/"/g, '&quot;');
 }
 
 function renderHeadingInline(markdown: string): string {
+  const tick = String.fromCharCode(96);
   return markdown
-    .split(/(`[^`]*`|\$[^$]*\$)/g)
+    .split(
+      new RegExp('(' + tick + '[^' + tick + ']*' + tick + '|\\$[^$]*\\$)', 'g')
+    )
     .map((part) => {
-      if (part.startsWith('`') && part.endsWith('`')) {
-        return `<code>${escapeHtmlText(part.slice(1, -1))}</code>`;
-      }
+      if (part.startsWith(tick) && part.endsWith(tick))
+        return '<code>' + escapeHtmlText(part.slice(1, -1)) + '</code>';
       if (part.startsWith('$') && part.endsWith('$')) {
         const math = part.slice(1, -1);
-        return `<span class="math-inline" data-math-source="${escapeHtmlAttribute(math)}">\\(${escapeHtmlText(math)}\\)</span>`;
+        return (
+          '<span class="math-inline" data-math-source="' +
+          escapeHtmlAttribute(math) +
+          '">\\(' +
+          escapeHtmlText(math) +
+          '\\)</span>'
+        );
       }
       return escapeHtmlText(part);
     })
@@ -240,129 +186,201 @@ function formatLeafDocument(
 ): string {
   let firstHeading = true;
   let sectionIndex = 0;
-  return markdown.replace(
-    /^(#{1,5})\s+([^\r\n]+)$/gm,
-    (_match, hashes: string, title: string) => {
+  let fence: { marker: string; length: number } | undefined;
+  return markdown
+    .split(/\r?\n/)
+    .map((line) => {
+      const fenceMatch = line.match(/^ {0,3}([\x60]{3,}|~{3,})(.*)$/);
+      if (fence) {
+        if (
+          fenceMatch &&
+          fenceMatch[1][0] === fence.marker &&
+          fenceMatch[1].length >= fence.length &&
+          fenceMatch[2].trim() === ''
+        ) {
+          fence = undefined;
+        }
+        return line;
+      }
+      if (fenceMatch) {
+        fence = { marker: fenceMatch[1][0], length: fenceMatch[1].length };
+        return line;
+      }
+      const heading = line.match(/^(#{1,5})\s+([^\r\n]+)$/);
+      if (!heading) return line;
+      const hashes = heading[1];
+      const title = heading[2];
       if (firstHeading) {
         firstHeading = false;
-        return `<h2 id="${anchorId}">${renderHeadingInline(title)}</h2>`;
+        return (
+          '<h2 id="' + anchorId + '">' + renderHeadingInline(title) + '</h2>'
+        );
       }
       if (hashes.length === 2) {
         const sectionAnchorId = sectionAnchorIds[sectionIndex++];
-        if (!sectionAnchorId) throw new Error(`Missing print section anchor for ${title}`);
-        return `<h4 id="${sectionAnchorId}">${renderHeadingInline(title)}</h4>`;
+        if (!sectionAnchorId)
+          throw new Error('Missing print section anchor for ' + title);
+        return (
+          '<h4 id="' +
+          sectionAnchorId +
+          '">' +
+          renderHeadingInline(title) +
+          '</h4>'
+        );
       }
-      return `${'#'.repeat(Math.min(6, hashes.length + 2))} ${title}`;
-    }
-  );
+      return '#'.repeat(Math.min(6, hashes.length + 2)) + ' ' + title;
+    })
+    .join('\n');
 }
 
 async function readUtf8(filePath: string): Promise<string> {
   return fs.readFile(filePath, 'utf8');
 }
 
-async function buildPrintableMarkdown(): Promise<string> {
-  const org = (await readUtf8(path.join(workspaceRoot, 'org.cpp'))).trimEnd();
-  const categoryDocuments: Array<{
-    directory: string;
-    title: string;
-    anchorId: string;
-    indexMarkdown: string;
-    page: number;
-    leaves: Array<{
-      name: string;
-      title: string;
-      anchorId: string;
-      markdown: string;
-      page: number;
-      sections: Array<{
-        title: string;
-        anchorId: string;
-        page?: number;
-      }>;
-    }>;
-  }> = [];
+async function collectPrintCategories(): Promise<PrintCategory[]> {
+  const categories = await discoverCategories();
+  return Promise.all(
+    categories.map(async (category) => {
+      const directory = path.join(templateRoot, category);
+      const indexMarkdown = await readUtf8(path.join(directory, 'README.md'));
+      const leafNames = (await fs.readdir(directory))
+        .filter(
+          (name) => name.toLowerCase().endsWith('.md') && name !== 'README.md'
+        )
+        .sort(naturalCompare);
+      const leaves = await Promise.all(
+        leafNames.map(async (name) => {
+          const markdown = await readUtf8(path.join(directory, name));
+          return {
+            name,
+            title: extractHeading(markdown, path.parse(name).name),
+            anchorId: documentAnchor(category, name),
+            markdown,
+            sections: extractSecondLevelHeadings(markdown).map(
+              (rawTitle, index) => ({
+                title: plainHeading(rawTitle),
+                anchorId: sectionAnchor(category, name, index),
+              })
+            ),
+          };
+        })
+      );
+      return {
+        directory: category,
+        title: extractHeading(indexMarkdown, category.replace(/^\d+-/, '')),
+        anchorId: categoryAnchor(category),
+        indexMarkdown,
+        leaves,
+      };
+    })
+  );
+}
 
-  for (const category of categories) {
-    const directory = path.join(workspaceRoot, '模板', category);
-    const indexMarkdown = await readUtf8(path.join(directory, 'README.md'));
-    const leafNames = (await fs.readdir(directory))
-      .filter((name) => name.toLowerCase().endsWith('.md') && name !== 'README.md')
-      .sort((left, right) => left.localeCompare(right, 'zh-CN', { numeric: true }));
-    const leaves = await Promise.all(
-      leafNames.map(async (name) => {
-        const markdown = await readUtf8(path.join(directory, name));
-        const rawTitle = markdown.match(/^#\s+([^\r\n]+)/)?.[1]?.trim() ?? path.parse(name).name;
-        const title = plainHeading(rawTitle);
-        const sections = extractSecondLevelHeadings(markdown).map((rawSectionTitle, index) => ({
-          title: plainHeading(rawSectionTitle),
-          anchorId: sectionAnchor(category, name, index),
-          page: printPageNumbers.sections[`${category}/${name}#${index + 1}`],
-        }));
-        return {
-          name,
-          title,
-          anchorId: documentAnchor(category, name),
-          markdown,
-          page: printPageNumbers.documents[`${category}/${name}`],
-          sections,
-        };
-      })
+function pageNumberFor(
+  pageNumbers: PageNumbers | undefined,
+  anchorId: string,
+  label: string
+): string {
+  if (!pageNumbers) return '';
+  const page = pageNumbers[anchorId];
+  if (page === undefined)
+    throw new Error(
+      'Unable to resolve print page number for ' + label + ' (' + anchorId + ')'
     );
-    categoryDocuments.push({
-      directory,
-      title: category.replace(/^\d+-/, ''),
-      anchorId: categoryAnchor(category),
-      indexMarkdown,
-      leaves,
-      page: printPageNumbers.categories[category],
-    });
-  }
+  return String(page);
+}
 
+async function buildPrintableMarkdown(
+  pageNumbers?: PageNumbers
+): Promise<PrintableBuild> {
+  const org = (await readUtf8(path.join(workspaceRoot, 'org.cpp'))).trimEnd();
+  const categoryDocuments = await collectPrintCategories();
+  const anchors = categoryDocuments.flatMap((category) => [
+    category.anchorId,
+    ...category.leaves.flatMap((leaf) => [
+      leaf.anchorId,
+      ...leaf.sections.map((section) => section.anchorId),
+    ]),
+  ]);
   const tocRow = (
     title: string,
-    page: number,
     anchorId: string,
+    label: string,
     extraClass = ''
   ): string =>
     [
-      `<a class="print-manual-toc-entry${extraClass ? ` ${extraClass}` : ''}" href="#${anchorId}">`,
+      '<a class="print-manual-toc-entry' +
+        (extraClass ? ' ' + extraClass : '') +
+        '" href="#' +
+        anchorId +
+        '">',
       '<span class="print-manual-toc-entry-title">',
-      title,
+      escapeHtmlText(title),
       '</span><span class="print-manual-toc-leader"></span>',
-      `<span class="print-manual-toc-page">${page}</span>`,
+      '<span class="print-manual-toc-page markdown2pdf-toc-page-number">' +
+        pageNumberFor(pageNumbers, anchorId, label) +
+        '</span>',
       '</a>',
     ].join('');
-
-  const renderTocColumn = (documents: typeof categoryDocuments): string => [
-    '<div class="print-manual-toc-column">',
-    ...documents.flatMap((category) => [
-      `<div class="print-manual-toc-group"><p class="print-manual-toc-category">${tocRow(category.title, category.page, category.anchorId)}</p>`,
-      '<ol class="print-manual-toc-documents">',
-      ...category.leaves.map((leaf) => {
-        const sections = leaf.sections.filter(
-          (section): section is typeof section & { page: number } => section.page !== undefined
-        );
-        return [
-          '<li class="print-manual-toc-document">',
-          tocRow(leaf.title, leaf.page, leaf.anchorId),
-          ...(sections.length
-            ? [
-                '<ol class="print-manual-toc-sections">',
-                ...sections.map(
-                  (section) => `<li>${tocRow(section.title, section.page, section.anchorId, 'print-manual-toc-section-entry')}</li>`
-                ),
-                '</ol>',
-              ]
-            : []),
-          '</li>',
-        ].join('\n');
-      }),
-      '</ol></div>',
-    ]),
-    '</div>',
-  ].join('\n');
-
+  const renderTocColumn = (items: PrintCategory[]): string =>
+    [
+      '<div class="print-manual-toc-column">',
+      ...items.flatMap((category) => [
+        '<div class="print-manual-toc-group"><p class="print-manual-toc-category">' +
+          tocRow(
+            category.title,
+            category.anchorId,
+            'category ' + category.directory
+          ) +
+          '</p>',
+        '<ol class="print-manual-toc-documents">',
+        ...category.leaves.map((leaf) =>
+          [
+            '<li class="print-manual-toc-document">',
+            tocRow(
+              leaf.title,
+              leaf.anchorId,
+              category.directory + '/' + leaf.name
+            ),
+            ...(leaf.sections.length
+              ? [
+                  '<ol class="print-manual-toc-sections">',
+                  ...leaf.sections.map(
+                    (section) =>
+                      '<li>' +
+                      tocRow(
+                        section.title,
+                        section.anchorId,
+                        category.directory +
+                          '/' +
+                          leaf.name +
+                          ' ' +
+                          section.title,
+                        'print-manual-toc-section-entry'
+                      ) +
+                      '</li>'
+                  ),
+                  '</ol>',
+                ]
+              : []),
+            '</li>',
+          ].join('\n')
+        ),
+        '</ol></div>',
+      ]),
+      '</div>',
+    ].join('\n');
+  const splitIndex = Math.ceil(categoryDocuments.length / 2);
+  const coverTopics = categoryDocuments.map(
+    (category) =>
+      '    <div><span>' +
+      escapeHtmlText(numericPrefix(category.directory).padStart(2, '0')) +
+      '</span>' +
+      escapeHtmlText(category.title) +
+      '</div>'
+  );
+  const tick = String.fromCharCode(96);
+  const fence = tick.repeat(3);
   const parts: string[] = [
     [
       '<section class="print-cover">',
@@ -370,39 +388,45 @@ async function buildPrintableMarkdown(): Promise<string> {
       '  <p class="print-cover-title">算法竞赛模板</p>',
       '  <p class="print-cover-author"><span>BY</span><a href="https://codeforces.com/profile/CirnoNine">CirnoNine</a></p>',
       '  <div class="print-cover-topics">',
-      '    <div><span>01</span>数论</div>',
-      '    <div><span>02</span>计算几何</div>',
-      '    <div><span>03</span>数据结构</div>',
-      '    <div><span>04</span>图论与网络流</div>',
-      '    <div><span>05</span>多项式</div>',
-      '    <div><span>06</span>杂项</div>',
+      ...coverTopics,
       '  </div>',
       '</section>',
       '',
       '<section class="print-manual-toc">',
       '  <p class="print-manual-toc-title">目录</p>',
       '  <div class="print-manual-toc-grid">',
-      renderTocColumn(categoryDocuments.slice(0, 4)),
-      renderTocColumn(categoryDocuments.slice(4)),
+      renderTocColumn(categoryDocuments.slice(0, splitIndex)),
+      renderTocColumn(categoryDocuments.slice(splitIndex)),
       '  </div>',
       '</section>',
       '',
       '# 比赛基础骨架',
       '',
-      '> `org.cpp` 中的 `int` 实际为 `long long`；其他常用别名与辅助函数按比赛现场代码库补充。',
+      '> ' +
+        tick +
+        'org.cpp' +
+        tick +
+        ' 中的 ' +
+        tick +
+        'int' +
+        tick +
+        ' 实际为 long long；其他常用别名与辅助函数按比赛现场代码库补充。',
       '',
-      '```cpp',
+      fence + 'cpp',
       org,
-      '```',
+      fence,
     ].join('\n'),
   ];
-
   for (const category of categoryDocuments) {
     parts.push(
-      `<h1 id="${category.anchorId}">${escapeHtmlText(category.title)}</h1>\n\n${stripLocalLinks(removeFirstHeading(category.indexMarkdown))}`
+      '<h1 id="' +
+        category.anchorId +
+        '">' +
+        escapeHtmlText(category.title) +
+        '</h1>\n\n' +
+        stripLocalLinks(removeFirstHeading(category.indexMarkdown))
     );
-
-    for (const leaf of category.leaves) {
+    for (const leaf of category.leaves)
       parts.push(
         stripLocalLinks(
           formatLeafDocument(
@@ -412,56 +436,170 @@ async function buildPrintableMarkdown(): Promise<string> {
           )
         )
       );
-    }
   }
+  return {
+    markdown: parts.join('\n\n'),
+    anchors,
+    sourceDocuments: categoryDocuments.reduce(
+      (total, category) => total + category.leaves.length,
+      0
+    ),
+  };
+}
 
-  return parts.join('\n\n');
+async function readPdfDestinationPages(
+  pdfData: Uint8Array,
+  anchors: string[]
+): Promise<PageNumbers> {
+  const pdfjs = await import(
+    pathToFileURL(
+      path.join(
+        markdown2pdfRoot,
+        'node_modules/pdfjs-dist/legacy/build/pdf.mjs'
+      )
+    ).href
+  );
+  const document = await pdfjs.getDocument({ data: pdfData }).promise;
+  try {
+    const entries = await Promise.all(
+      anchors.map(async (anchor): Promise<[string, number]> => {
+        const destination =
+          (await document.getDestination(anchor)) ??
+          (await document.getDestination(safeDecodeURIComponent(anchor)));
+        if (!destination)
+          throw new Error('Unable to resolve print destination: ' + anchor);
+        return [anchor, (await document.getPageIndex(destination[0])) + 1];
+      })
+    );
+    return Object.fromEntries(entries);
+  } finally {
+    await document.destroy();
+  }
+}
+
+async function readPdfPageCount(pdfData: Uint8Array): Promise<number> {
+  const pdfjs = await import(
+    pathToFileURL(
+      path.join(
+        markdown2pdfRoot,
+        'node_modules/pdfjs-dist/legacy/build/pdf.mjs'
+      )
+    ).href
+  );
+  const document = await pdfjs.getDocument({ data: pdfData }).promise;
+  try {
+    return document.numPages;
+  } finally {
+    await document.destroy();
+  }
+}
+
+function safeDecodeURIComponent(value: string): string {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+function pageNumbersEqual(
+  left: PageNumbers,
+  right: PageNumbers,
+  anchors: string[]
+): boolean {
+  return anchors.every((anchor) => left[anchor] === right[anchor]);
+}
+
+async function exportPrintPdf(
+  markdown: string,
+  targetPath: string,
+  config: ExportConfig
+): Promise<void> {
+  await exportMarkdownToPdf({
+    sourcePath: path.join(workspaceRoot, '算法竞赛模板-打印源.md'),
+    markdown,
+    outputPath: targetPath,
+    executablePath: config.chromePath!,
+    config,
+    includeToc: false,
+    includePageNumbers: true,
+  });
 }
 
 async function main(): Promise<void> {
-  const markdown = await buildPrintableMarkdown();
   const config: ExportConfig = {
     theme: 'academic',
     codeTheme: 'github-light',
     pageFormat: 'A4',
-    margin: {
-      top: '13mm',
-      right: '12mm',
-      bottom: '16mm',
-      left: '12mm',
-    },
+    margin: { top: '13mm', right: '12mm', bottom: '16mm', left: '12mm' },
     fontFamily:
       '"Microsoft YaHei", "Noto Sans CJK SC", "Segoe UI", Arial, sans-serif',
     beamerFooterText: '',
     customCssFile: path.join(workspaceRoot, '打印版.css'),
     chromePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   };
-
-  await exportMarkdownToPdf({
-    sourcePath: path.join(workspaceRoot, '算法竞赛模板-打印源.md'),
-    markdown,
-    outputPath,
-    executablePath: config.chromePath!,
-    config,
-    includeToc: false,
-    includePageNumbers: true,
-  });
-
-  const stat = await fs.stat(outputPath);
-  process.stdout.write(
-    JSON.stringify(
-      {
-        outputPath,
-        bytes: stat.size,
-        sourceDocuments: 70,
-      },
-      null,
-      2
-    )
+  const temporaryDirectory = await fs.mkdtemp(
+    path.join(os.tmpdir(), 'algorithm-competition-print-')
   );
+  try {
+    const preliminaryBuild = await buildPrintableMarkdown();
+    const preliminaryPath = path.join(temporaryDirectory, 'preliminary.pdf');
+    await exportPrintPdf(preliminaryBuild.markdown, preliminaryPath, config);
+    let pageNumbers = await readPdfDestinationPages(
+      new Uint8Array(await fs.readFile(preliminaryPath)),
+      preliminaryBuild.anchors
+    );
+    let finalBuild: PrintableBuild | undefined;
+    let finalPdfPath = path.join(temporaryDirectory, 'final.pdf');
+    let stable = false;
+    for (let iteration = 0; iteration < 3; iteration += 1) {
+      finalBuild = await buildPrintableMarkdown(pageNumbers);
+      await exportPrintPdf(finalBuild.markdown, finalPdfPath, config);
+      const actualPageNumbers = await readPdfDestinationPages(
+        new Uint8Array(await fs.readFile(finalPdfPath)),
+        finalBuild.anchors
+      );
+      if (
+        pageNumbersEqual(pageNumbers, actualPageNumbers, finalBuild.anchors)
+      ) {
+        stable = true;
+        break;
+      }
+      pageNumbers = actualPageNumbers;
+      finalPdfPath = path.join(
+        temporaryDirectory,
+        'final-' + (iteration + 2) + '.pdf'
+      );
+    }
+    if (!stable || !finalBuild)
+      throw new Error(
+        'Print TOC page numbers did not stabilize after three PDF passes.'
+      );
+    await fs.mkdir(path.dirname(outputPath), { recursive: true });
+    await fs.copyFile(finalPdfPath, outputPath);
+    const finalPdf = new Uint8Array(await fs.readFile(outputPath));
+    const stat = await fs.stat(outputPath);
+    process.stdout.write(
+      JSON.stringify(
+        {
+          outputPath,
+          bytes: stat.size,
+          pages: await readPdfPageCount(finalPdf),
+          sourceDocuments: finalBuild.sourceDocuments,
+          tocEntries: finalBuild.anchors.length,
+        },
+        null,
+        2
+      )
+    );
+  } finally {
+    await fs.rm(temporaryDirectory, { recursive: true, force: true });
+  }
 }
 
 main().catch((error) => {
-  process.stderr.write(`${error instanceof Error ? error.stack ?? error.message : String(error)}\n`);
+  process.stderr.write(
+    (error instanceof Error ? (error.stack ?? error.message) : String(error)) +
+      '\n'
+  );
   process.exitCode = 1;
 });
