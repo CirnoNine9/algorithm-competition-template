@@ -4,9 +4,15 @@
 > $h(i)=[x^N]f(x)g(x)^i$，
 > 但将核心消元与 NTT 排布融合，减少通用二元卷积的常数。
 >
-> **复杂度：** 快速卷积模型下为准线性量级，通常写作 $\widetilde O(N+n)$；空间 $O(N+n)$。
+> **复杂度：** $O(n\log^2 n)$；空间 $O(n)$。
 >
 > **使用条件：** 强依赖卡常 NTT 中的根 `31`、`fac/ifac` 和模数 `998244353`；核心还会使用 $2\cdot len$ 次单位根，因此这里的 `len` 至多为 $2^{22}$。
+
+**常数参考（ms，中位数，$N=n$）：**
+
+| NTT | $n=3\times10^4$ | $n=5\times10^4$ | $n=10^5$ | $n=2\times10^5$ | $n=3\times10^5$ |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 卡常 NTT | 68.057 | 153.649 | 359.245 | 1139.791 | 2147.812 |
 
 ```cpp
 vector<int> powerProjection(vector<int> f, vector<int> g, int n) {
@@ -90,11 +96,6 @@ vector<int> powerProjection(vector<int> f, vector<int> g, int n) {
     };
 
     auto pp = [&](auto &&self, vector<int> wt, vector<int> h, int m) -> vector<int> {
-        if (wt.size() < h.size()) wt.resize(h.size());
-        else if (h.size() < wt.size()) h.resize(wt.size());
-
-        if (h.empty()) return vector<int>(m+1, 0);
-
         if (h[0]) {
             int c = h[0];
             h[0] = 0;
@@ -118,8 +119,7 @@ vector<int> powerProjection(vector<int> f, vector<int> g, int n) {
         return pp0(wt, h, m);
     };
 
-    if (f.size() < g.size()) f.resize(g.size());
-    else if (g.size() < f.size()) g.resize(f.size());
+    f.resize(g.size());
 
     vector<int> wt(f.size());
     for (int i = 0; i < (int)f.size(); i++) wt[i] = f[(int)f.size()-1-i];
