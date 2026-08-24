@@ -1,44 +1,59 @@
 # MTT 任意模卷积
 
-> **用途：** 把系数拆成高低位后用复数 FFT 做卷积，从而支持任意运行时模数。
->
-> **复杂度：** 时间 $O((n+m)\log(n+m))$，额外空间 $O(n+m)$。
->
-> **使用条件：** 依赖 FFT；输入系数应先规范到 `[0,mod)`。结果正确性还受系数规模、卷积长度与浮点精度影响。
+> **用途：** 分别在三个 NTT 友好素数下计算卷积，再用 Garner 算法合并到运行时模数 $mod$。
 
-当 $n\le10^5$ 时，可以按误差范围考虑是否把 `double` 换为 `long double`。
+| 操作/结构 | 含义 | 复杂度 | 备注 |
+| --- | --- | --- | --- |
+| `operator*=` | 将左操作数覆盖为任意模卷积 | $O((n+m)\log(n+m))$ | 空输入得到空结果 |
+| `operator*` | 返回任意模卷积 | $O((n+m)\log(n+m))$ | 输入系数应规范到 $[0,mod)$ |
+
+依赖的 `qpow`、`ntt` 与单模 `operator*` 不在下方重复展开，只需在原函数定义前添加 `template<int mod>`，并通过 `qpow<mod>`、`ntt<mod>`、`operator*<mod>` 调用。
+
+现有卡常版 NTT 不能直接填入：其中的 `31`、`23` 与根表绑定 $998244353$，而 `p0`、`p1`、`p2` 的最高二次单位根层数分别为 $21$、$23$、$22$；必须将根初始化改为按模数配置后才能使用。
+
+**已验证数据范围：** $2\le mod\le10^9+7$，$n,m\le10^6$，补齐后的变换长度不超过 $2^{21}$；此时整数卷积系数小于三个素数之积，结果严格正确。
+
+**常数参考（ms，中位数，$n=m$，$mod=10^9+7$）：** 单模 `operator*` 填入基础版 NTT。
+
+| 实现 | $10^5$ | $2\times10^5$ | $5\times10^5$ | $10^6$ |
+| --- | ---: | ---: | ---: | ---: |
+| 三模 NTT + Garner | 40.867 | 102.096 | 249.967 | 581.086 |
 
 ```cpp
 int mod;
-const int M = 1ll << 15;
-void operator*=(vector<int> &AA, vector<int> BB) {
-    int n = AA.size(), m = BB.size(), cnt = 1;
-    while (cnt < n+m-1) cnt *= 2;
-    AA.resize(cnt), BB.resize(cnt);
 
-    vector<cd> A(cnt), B(cnt), C(cnt), D(cnt);
-    for (int i = 0; i < cnt; i++) {
-        A[i] = cd(AA[i]/M, AA[i]%M), C[i] = cd(BB[i]/M, BB[i]%M);
-    }
-    fft(A, cnt, 1), fft(C, cnt, 1);
+template<int mod>
+int qpow(int a, int n);
 
-    for (int i = 1; i < cnt; i++) B[i] = conj(A[cnt-i]);
-    B[0] = conj(A[0]);
-    for (int i = 1; i < cnt; i++) D[i] = conj(C[cnt-i]);
-    D[0] = conj(C[0]);
-    for (int i = 0; i < cnt; i++) {
-        cd aa = (A[i]+B[i])*cd(0.5, 0), bb = (A[i]-B[i])*cd(0, -0.5);
-        cd cc = (C[i]+D[i])*cd(0.5, 0), dd = (C[i]-D[i])*cd(0, -0.5);
-        A[i] = aa*cc+cd(0, 1)*(aa*dd+bb*cc), B[i] = bb*dd;
-    }
+template<int mod>
+void ntt(vector<int> &A, int n, int op);
 
-    fft(A, cnt, -1), fft(B, cnt, -1);
-    AA.resize(n+m-1);
+template<int mod>
+vector<int> operator*(vector<int> A, vector<int> B);
+
+void operator*=(vector<int> &A, vector<int> B) {
+    const int p0 = 1004535809, p1 = 998244353, p2 = 985661441;
+    int n = A.size(), m = B.size();
+    if (!n || !m) return A.clear();
+    auto c0 = operator*<p0>(A, B), c1 = operator*<p1>(A, B), c2 = operator*<p2>(A, B);
+    static const int iv01 = qpow<p1>(p0, p1-2);
+    static const int iv02 = qpow<p2>(p0, p2-2);
+    static const int iv12 = qpow<p2>(p1, p2-2);
+    int w1 = p0%mod, w2 = w1*(p1%mod)%mod;
+    A.resize(n+m-1);
     for (int i = 0; i < n+m-1; i++) {
-        int aa = (int)(A[i].real()+0.5)%mod;
-        int bb = (int)(A[i].imag()+0.5)%mod;
-        int cc = (int)(B[i].real()+0.5)%mod;
-        AA[i]=((aa*M*M+bb*M+cc)%mod+mod)%mod;
+        int x1 = (c1[i]-c0[i])%p1;
+        if (x1 < 0) x1 += p1;
+        x1 = x1*iv01%p1;
+        int x2 = (c2[i]-c0[i])%p2;
+        if (x2 < 0) x2 += p2;
+        x2 = x2*iv02%p2;
+        x2 = (x2-x1)%p2;
+        if (x2 < 0) x2 += p2;
+        x2 = x2*iv12%p2;
+        A[i] = (c0[i]%mod+x1*w1%mod+x2*w2%mod)%mod;
     }
 }
+
+vector<int> operator*(vector<int> A, vector<int> B) {A *= B; return A;}
 ```
