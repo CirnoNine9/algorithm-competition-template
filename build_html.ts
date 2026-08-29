@@ -456,7 +456,7 @@ function buildPolyBundle(allDocuments: TemplateDocument[]): string {
     ['模板/05-多项式/10-多项式乘法逆.md'],
     ['模板/05-多项式/11-稀疏多项式除法.md'],
     ['模板/05-多项式/13-多项式整除与取模.md'],
-    ['模板/05-多项式/19-分式第N项.md'],
+    ['模板/05-多项式/19-分式第k项.md'],
   ];
   const laterSources: Array<[string, number?]> = [
     ['模板/05-多项式/15-多项式平方根.md'],
