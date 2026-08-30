@@ -51,7 +51,7 @@ struct Splay {
         if (!isRoot(y)) tr[z].s[rs(z)==y] = x;
         tr[y].s[k] = w, tr[x].s[k^1] = y;
         fa(w) = y, fa(y) = x, fa(x) = z;
-        pushUp(y), pushUp(x), pushUp(z);
+        pushUp(y), pushUp(x);
     }
 
     void splay(int x) {
