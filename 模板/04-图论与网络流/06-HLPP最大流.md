@@ -41,7 +41,6 @@ struct Flow {
             while (~ovList[maxh]) {
                 int x = ovList[maxh];
                 ovList[maxh] = ovNxt[x];
-                ovNxt[x] = -1;
 
                 discharge(x);
 
@@ -97,7 +96,7 @@ struct Flow {
         h[t] = 0;
         fill(gapPrv.begin(), gapPrv.end(), -1), fill(gapNxt.begin(), gapNxt.end(), -1);
         fill(gap.begin(), gap.end(), -1), fill(ovList.begin(), ovList.end(), -1);
-        fill(ovNxt.begin(), ovNxt.end(), -1), fill(cur.begin(), cur.end(), 0);
+        fill(cur.begin(), cur.end(), 0);
 
         queue<int> q;
         q.push(t);
