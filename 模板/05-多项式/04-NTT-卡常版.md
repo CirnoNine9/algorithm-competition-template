@@ -12,17 +12,17 @@
 
 ```cpp
 void ntt(vector<int> &A, int n, int op) {
-    static array<int, 30> root, iroot, rate2, irate2, rate3, irate3;
+    static array<int, 30> root, iroot, rate2, rate3, irate3;
     static bool ok = 0;
     if (!ok) {
         ok = 1;
         root[23] = 31, iroot[23] = inv(root[23]);
         for (int i = 22; i >= 0; i--) root[i] = root[i+1]*root[i+1]%mod, iroot[i] = iroot[i+1]*iroot[i+1]%mod;
 
-        int prod = 1, iprod = 1;
+        int prod = 1, iprod;
         for (int i = 0; i <= 21; i++) {
-            rate2[i] = root[i+2]*prod%mod, irate2[i] = iroot[i+2]*iprod%mod;
-            prod = prod*iroot[i+2]%mod, iprod = iprod*root[i+2]%mod;
+            rate2[i] = root[i+2]*prod%mod;
+            prod = prod*iroot[i+2]%mod;
         }
 
         prod = 1, iprod = 1;
@@ -37,14 +37,12 @@ void ntt(vector<int> &A, int n, int op) {
         int len = 0;
         while (len < h) {
             if (h-len == 1) {
-                int p = 1<<(h-len-1), rot = 1;
+                int rot = 1;
                 for (int s = 0; s < (1<<len); s++) {
-                    int offset = s<<(h-len);
-                    for (int i = 0; i < p; i++) {
-                        int l = A[i+offset], r = A[i+offset+p]*rot%mod;
-                        A[i+offset] = l+r < mod ? l+r : l+r-mod;
-                        A[i+offset+p] = l-r >= 0 ? l-r : l-r+mod;
-                    }
+                    int offset = s<<1;
+                    int l = A[offset], r = A[offset+1]*rot%mod;
+                    A[offset] = l+r < mod ? l+r : l+r-mod;
+                    A[offset+1] = l-r >= 0 ? l-r : l-r+mod;
                     rot = rot*rate2[__lg((~s)&(-~s))]%mod;
                 }
                 len++;
@@ -77,15 +75,11 @@ void ntt(vector<int> &A, int n, int op) {
         int len = h;
         while (len) {
             if (len == 1) {
-                int p = 1<<(h-len), irot = 1;
-                for (int s = 0; s < (1<<(len-1)); s++) {
-                    int offset = s<<(h-len+1);
-                    for (int i = 0; i < p; i++) {
-                        int l = A[i+offset], r = A[i+offset+p];
-                        A[i+offset] = l+r < mod ? l+r : l+r-mod;
-                        A[i+offset+p] = (l-r+mod)*irot%mod;
-                    }
-                    irot = irot*irate2[__lg((~s)&(-~s))]%mod;
+                int p = n/2;
+                for (int i = 0; i < p; i++) {
+                    int l = A[i], r = A[i+p];
+                    A[i] = l+r < mod ? l+r : l+r-mod;
+                    A[i+p] = l-r >= 0 ? l-r : l-r+mod;
                 }
                 len--;
             } else {
