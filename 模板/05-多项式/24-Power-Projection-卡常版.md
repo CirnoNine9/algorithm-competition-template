@@ -95,34 +95,23 @@ vector<int> powerProjection(vector<int> f, vector<int> g, int n) {
         return P;
     };
 
-    auto pp = [&](auto &&self, vector<int> wt, vector<int> h, int m) -> vector<int> {
-        if (h[0]) {
-            int c = h[0];
-            h[0] = 0;
-            auto A = self(self, wt, h, m);
-            for (int i = 0; i <= m; i++) A[i] = A[i]*ifac(i)%mod;
-
-            vector<int> B(m+1);
-            for (int i = 0, pw = 1; i <= m; i++, pw = pw*c%mod) B[i] = pw*ifac(i)%mod;
-
-            A *= B, A.resize(m+1);
-            for (int i = 0; i <= m; i++) A[i] = A[i]*fac(i)%mod;
-            return A;
-        }
-
-        if (h.size() == 1) {
-            vector<int> A(m+1);
-            A[0] = wt[0];
-            return A;
-        }
-
-        return pp0(wt, h, m);
-    };
-
     f.resize(g.size());
+    reverse(f.begin(), f.end());
+    int c = g[0];
+    g[0] = 0;
+    vector<int> A;
+    if (g.size() == 1) {
+        A.resize(n+1);
+        A[0] = f[0];
+    } else A = pp0(f, g, n);
 
-    vector<int> wt(f.size());
-    for (int i = 0; i < (int)f.size(); i++) wt[i] = f[(int)f.size()-1-i];
-    return pp(pp, wt, g, n);
+    if (c) {
+        for (int i = 0; i <= n; i++) A[i] = A[i]*ifac(i)%mod;
+        vector<int> B(n+1);
+        for (int i = 0, pw = 1; i <= n; i++, pw = pw*c%mod) B[i] = pw*ifac(i)%mod;
+        A *= B, A.resize(n+1);
+        for (int i = 0; i <= n; i++) A[i] = A[i]*fac(i)%mod;
+    }
+    return A;
 }
 ```
