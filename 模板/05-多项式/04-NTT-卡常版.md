@@ -128,11 +128,11 @@ void operator*=(vector<int> &A, vector<int> B) {
     if (n+m-3 <= cnt/2) {
         int al = A.back(), bl = B.back();
         A.pop_back(), B.pop_back();
-        vector<int> a = A, b = B;
+        vector<int> a = A;
         A *= B;
         A.resize(n+m-1), A[n+m-2] = al*bl%mod;
         for (int i = 0; i < n-1; i++) A[i+m-1] = (A[i+m-1]+a[i]*bl)%mod;
-        for (int i = 0; i < m-1; i++) A[i+n-1] = (A[i+n-1]+b[i]*al)%mod;
+        for (int i = 0; i < m-1; i++) A[i+n-1] = (A[i+n-1]+B[i]*al)%mod;
         return;
     }
 
