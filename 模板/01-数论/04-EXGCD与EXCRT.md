@@ -43,10 +43,10 @@ int excrt(vector<pii> &a) {
         if (d % g) return -1;
         int m = a[i][0] / g;
         x = (i128)x * (d / g) % m;
-        x = (x % m + m) % m;
+        if (x < 0) x += m;
         preB = preA * x + preB;
         preA = m * preA;
     }
-    return (preB % preA + preA) % preA;
+    return preB;
 }
 ```
