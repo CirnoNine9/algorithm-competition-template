@@ -1,10 +1,14 @@
 # NTT：卡常版
 
-> **用途：** 针对模数 `998244353` 的高性能多项式卷积，使用 radix-4 蝶形、预处理旋转因子、小规模朴素乘法和长度削减优化。
->
-> **复杂度：** 单次变换 $O(n\log n)$，卷积 $O((n+m)\log(n+m))$，额外空间 $O(n+m)$。
->
-> **使用条件：** 常量 `31`、`23` 与根表均绑定 `998244353`；输入系数应先规范到 `[0,mod)`。`operator*=` 覆盖左操作数，`operator*` 返回乘积。
+> **用途：** 针对模数 $998244353$ 的高性能多项式卷积，使用 radix-4 蝶形、预处理旋转因子、小规模朴素乘法和长度削减优化。
+
+| 操作/结构 | 含义 | 复杂度 | 备注 |
+| --- | --- | --- | --- |
+| `ntt(A, n, op)` | 原地正变换或逆变换 | $O(n\log n)$ | $|A|=n=2^k$，$0\le k\le23$；$op=1$ 为正变换，$op=-1$ 为逆变换 |
+| `operator*=` | 将左操作数覆盖为卷积 | $O((n+m)\log(n+m))$ | $n=|A|$、$m=|B|$；非空输入满足 $n+m-1\le2^{23}$，空输入返回空 |
+| `operator*` | 返回卷积 | $O((n+m)\log(n+m))$ | 长度条件同 `operator*=` |
+
+模数固定为 $mod=998244353$，输入系数均在 $[0,mod)$ 内。蝶形取模前的中间量小于 $4mod^2<2^{63}$，可用 `i64` 计算。
 
 ```cpp
 void ntt(vector<int> &A, int n, int op) {
@@ -52,10 +56,10 @@ void ntt(vector<int> &A, int n, int op) {
                     for (int i = 0; i < p; i++) {
                         int mod2 = mod*mod;
                         int a0 = A[i+offset];
-                        int a1 = A[i+offset+p]*rot%mod;
-                        int a2 = A[i+offset+2*p]*rot2%mod;
-                        int a3 = A[i+offset+3*p]*rot3%mod;
-                        int a1na3imag = (a1+mod2-a3)%mod*imag%mod, na2 = mod2-a2;
+                        int a1 = A[i+offset+p]*rot;
+                        int a2 = A[i+offset+2*p]*rot2;
+                        int a3 = A[i+offset+3*p]*rot3;
+                        int a1na3imag = (a1+mod2-a3)%mod*imag, na2 = mod2-a2;
                         A[i+offset] = (a0+a2+a1+a3)%mod;
                         A[i+offset+p] = (a0+a2+(2*mod2-(a1+a3)))%mod;
                         A[i+offset+2*p] = (a0+na2+a1na3imag)%mod;
@@ -91,11 +95,11 @@ void ntt(vector<int> &A, int n, int op) {
                     int offset = s<<(h-len+2);
                     for (int i = 0; i < p; i++) {
                         int a0 = A[i+offset], a1 = A[i+offset+p], a2 = A[i+offset+2*p], a3 = A[i+offset+3*p];
-                        int x = (mod+a2-a3)%mod*iimag%mod;
+                        int x = (mod+a2-a3)*iimag%mod;
                         A[i+offset] = (a0+a1+a2+a3)%mod;
-                        A[i+offset+p] = (a0+mod-a1+x)%mod*irot%mod;
-                        A[i+offset+2*p] = (a0+a1+2*mod-a2-a3)%mod*irot2%mod;
-                        A[i+offset+3*p] = (a0+2*mod-a1-x)%mod*irot3%mod;
+                        A[i+offset+p] = (a0+mod-a1+x)*irot%mod;
+                        A[i+offset+2*p] = (a0+a1+2*mod-a2-a3)*irot2%mod;
+                        A[i+offset+3*p] = (a0+2*mod-a1-x)*irot3%mod;
                     }
                     irot = irot*irate3[__lg((~s)&(-~s))]%mod;
                 }
