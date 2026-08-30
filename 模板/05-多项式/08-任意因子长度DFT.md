@@ -46,13 +46,7 @@ void dft(vector<int> &A, int op = 1) {
             return;
         }
 
-        int r;
-        if (n%17 == 0) r = 17;
-        else if (n%7 == 0) r = 7;
-        else {
-            ntt(A, n, op);
-            return;
-        }
+        int r = n%17 == 0 ? 17 : 7;
 
         int m = n/r;
         vector<int> B(n), t(max(r, m));
