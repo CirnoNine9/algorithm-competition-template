@@ -18,11 +18,10 @@ const pii factor[] = {{2, 23}, {7, 1}, {17, 1}};
 int ln(int a) {
     vector<pii> vt;
     for (auto [p, e] : factor) {
-        int pe = qpow(p, e);
-        int s = 0;
+        int s = 0, pw = 1;
         int B = qpow(g, phi / p);
 
-        for (int i = 0, pw = 1; i < e; i++, pw *= p) {
+        for (int i = 0; i < e; i++, pw *= p) {
             int A = qpow(a, phi / (p * pw));
             int C = qpow(g, s * phi / (p * pw));
             for (int x = 0; x < p; x++) {
@@ -32,7 +31,7 @@ int ln(int a) {
                 }
             }
         }
-        vt.push_back({pe, s});
+        vt.push_back({pw, s});
     }
     return excrt(vt);
 }
