@@ -157,8 +157,7 @@ private:
             e->vis = 1, f.push_back(org(e));
             que.push_back(e->rev());
             int u = org(e), v = dst(e);
-            if (u > v) swap(u, v);
-            edge.push_back({u, v});
+            if (u < v) edge.push_back({u, v});
             e = e->lNext();
         } while (e != s);
         if (!keep || f.size() != 3) return;
@@ -177,7 +176,6 @@ private:
             if (!e->vis) addFace(e, que, 1);
         }
         sort(edge.begin(), edge.end());
-        edge.erase(unique(edge.begin(), edge.end()), edge.end());
         sort(tri.begin(), tri.end());
     }
 
