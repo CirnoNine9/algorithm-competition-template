@@ -1,6 +1,7 @@
 # Local agent instructions
 AGENTS.md
 verify/
+benchmark/
 
 # Local review and legacy source
 代码审查.md
